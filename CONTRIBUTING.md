@@ -25,7 +25,8 @@ The complete repository gate is:
 ./build/Verify.ps1
 ```
 
-It includes classic-project source parity, a classic solution rebuild, all
+It includes classic-project source parity, Visual Studio 2005 solution
+structure validation, a rebuild of every classic project, all
 .NET 2.0 validation builds and test runners, the isolated Windows-native marquee
 process, and the documentation build. Unsupported local hosts report a precise
 native-marquee `SKIP`; Windows CI passes `-RequireNativeMarquee` and therefore

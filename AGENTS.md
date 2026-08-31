@@ -279,9 +279,10 @@ Prerequisites are PowerShell, .NET SDK 8, NuGet, MSBuild, and Node 22.
 ./build/Verify.ps1
 ```
 
-This checks classic-project source parity, schema/sample validation, solution
-configuration, C# 2.0/net20 validation builds, the classic solution rebuild,
-all test runners, the isolated native-marquee process, and documentation.
+This checks classic-project source parity, schema/sample validation, Visual
+Studio 2005 solution structure, C# 2.0/net20 validation builds, rebuilds every
+classic project, and runs all test runners, the isolated native-marquee
+process, and documentation.
 
 CI requires native marquee support:
 

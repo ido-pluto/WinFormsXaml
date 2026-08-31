@@ -16,6 +16,21 @@ if ($RequireNativeMarquee -and $SkipTests) {
 $repositoryRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $sourceRoot = Join-Path $repositoryRoot 'src/WinFormsXaml'
 $classicProject = Join-Path $sourceRoot 'WinFormsXaml.csproj'
+$classicSolution = Join-Path $repositoryRoot 'WinFormsXaml.sln'
+$classicProjects = @(
+    'src/WinFormsXaml/WinFormsXaml.csproj',
+    'samples/HelloWorld/HelloWorld.csproj',
+    'samples/ComponentsGallery/ComponentsGallery.csproj',
+    'samples/BindingPlayground/BindingPlayground.csproj',
+    'samples/PresetStudio/PresetStudio.csproj',
+    'samples/ItemsExplorer/ItemsExplorer.csproj',
+    'tests/WinFormsXaml.Tests/WinFormsXaml.Tests.csproj',
+    'tests/WinFormsXaml.LayoutTests/WinFormsXaml.LayoutTests.csproj',
+    'tests/WinFormsXaml.ItemsTests/WinFormsXaml.ItemsTests.csproj',
+    'tests/WinFormsXaml.NativeMarqueeValidation/WinFormsXaml.NativeMarqueeValidation.csproj',
+    'benchmarks/WinFormsXaml.Benchmarks/WinFormsXaml.Benchmarks.csproj',
+    'benchmarks/WinFormsXaml.InteractiveBenchmarks/WinFormsXaml.InteractiveBenchmarks.csproj'
+)
 $schemaPath = Join-Path $repositoryRoot 'schemas/WinFormsXaml.xsd'
 $schemaFixturePaths = @(
     Get-ChildItem `
@@ -103,6 +118,80 @@ function Test-ClassicSourceParity {
     Write-Host "Classic project source list matches all $($actualSources.Count) runtime source files."
 }
 
+function Test-ClassicSolutionStructure {
+    if (-not (Test-Path -LiteralPath $classicSolution -PathType Leaf)) {
+        throw "The Visual Studio 2005 solution was not found at '$classicSolution'."
+    }
+
+    $solutionText = [IO.File]::ReadAllText($classicSolution)
+    $expectedHeader =
+        'Microsoft Visual Studio Solution File, Format Version 9.00'
+
+    if (-not $solutionText.StartsWith(
+        $expectedHeader,
+        [StringComparison]::Ordinal)) {
+        throw "The classic solution must retain the Visual Studio 2005 format header '$expectedHeader'."
+    }
+
+    $projectEntryCount =
+        [Regex]::Matches($solutionText, '(?m)^Project\(').Count
+    if ($projectEntryCount -ne $classicProjects.Count) {
+        throw "The classic solution contains $projectEntryCount project entries; expected $($classicProjects.Count)."
+    }
+
+    foreach ($project in $classicProjects) {
+        $absoluteProject = Join-Path $repositoryRoot $project
+        if (-not (Test-Path -LiteralPath $absoluteProject -PathType Leaf)) {
+            throw "The classic solution project was not found: '$absoluteProject'."
+        }
+
+        $solutionProjectPath = $project.Replace('/', '\')
+        if ($solutionText.IndexOf(
+            ('"' + $solutionProjectPath + '"'),
+            [StringComparison]::OrdinalIgnoreCase) -lt 0) {
+            throw "The classic solution does not reference '$solutionProjectPath'."
+        }
+
+        [xml] $projectXml = Get-Content -LiteralPath $absoluteProject -Raw
+        $namespaceManager = New-Object System.Xml.XmlNamespaceManager(
+            $projectXml.NameTable)
+        $namespaceManager.AddNamespace(
+            'msb',
+            'http://schemas.microsoft.com/developer/msbuild/2003')
+        $projectGuidNode = $projectXml.SelectSingleNode(
+            '//msb:ProjectGuid',
+            $namespaceManager)
+
+        if ($null -eq $projectGuidNode -or
+            [String]::IsNullOrEmpty($projectGuidNode.InnerText)) {
+            throw "The classic project '$project' does not declare ProjectGuid."
+        }
+
+        $projectGuid = $projectGuidNode.InnerText.Trim()
+        foreach ($configuration in @('Debug', 'Release')) {
+            $activeConfiguration =
+                "$projectGuid.$configuration|Any CPU.ActiveCfg = " +
+                "$configuration|Any CPU"
+            $buildConfiguration =
+                "$projectGuid.$configuration|Any CPU.Build.0 = " +
+                "$configuration|Any CPU"
+
+            if ($solutionText.IndexOf(
+                $activeConfiguration,
+                [StringComparison]::OrdinalIgnoreCase) -lt 0) {
+                throw "The classic solution is missing '$activeConfiguration'."
+            }
+            if ($solutionText.IndexOf(
+                $buildConfiguration,
+                [StringComparison]::OrdinalIgnoreCase) -lt 0) {
+                throw "The classic solution is missing '$buildConfiguration'."
+            }
+        }
+    }
+
+    Write-Host "Visual Studio 2005 solution structure contains all $($classicProjects.Count) projects and Debug/Release mappings."
+}
+
 Push-Location $repositoryRoot
 try {
     Test-ClassicSourceParity
@@ -113,14 +202,8 @@ try {
     $msbuild = $null
 
     if (-not $SkipClassicSolutionValidation) {
+        Test-ClassicSolutionStructure
         $msbuild = Get-RequiredCommandPath 'msbuild'
-        Invoke-CheckedCommand $msbuild @(
-            'WinFormsXaml.sln',
-            '/t:ValidateSolutionConfiguration',
-            '/p:Configuration=Release',
-            '/p:Platform=Any CPU',
-            '/verbosity:minimal'
-        )
     }
     else {
         Write-Host 'WINFORMSXAML_CLASSIC_SOLUTION: SKIP - requested by -SkipClassicSolutionValidation; source parity and SDK validation still run.'
@@ -174,16 +257,22 @@ try {
                 [char[]] '\/') + [IO.Path]::DirectorySeparatorChar
         $net20FrameworkPath = [IO.Path]::GetFullPath($net20FrameworkPath)
 
-        Invoke-CheckedCommand $msbuild @(
-            'WinFormsXaml.sln',
-            '/t:Rebuild',
-            '/p:Configuration=Release',
-            '/p:Platform=Any CPU',
-            "/p:TargetFrameworkRootPath=$net20TargetFrameworkRoot",
-            "/p:FrameworkPathOverride=$net20FrameworkPath",
-            '/p:TreatWarningsAsErrors=true',
-            '/verbosity:minimal'
-        )
+        for ($projectIndex = 0;
+            $projectIndex -lt $classicProjects.Count;
+            $projectIndex++) {
+            $classicBuildArguments = @(
+                $classicProjects[$projectIndex],
+                '/t:Rebuild',
+                '/p:Configuration=Release',
+                '/p:Platform=AnyCPU',
+                "/p:TargetFrameworkRootPath=$net20TargetFrameworkRoot",
+                "/p:FrameworkPathOverride=$net20FrameworkPath",
+                '/p:TreatWarningsAsErrors=true',
+                '/verbosity:minimal'
+            )
+
+            Invoke-CheckedCommand $msbuild $classicBuildArguments
+        }
     }
 
     if (-not $SkipTests) {

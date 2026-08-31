@@ -12,14 +12,15 @@ Run the complete local gate from the repository root:
 ./build/Verify.ps1
 ```
 
-It validates classic-project source parity and solution structure, the XML
-schema against sample markup, C# 2.0/.NET 2.0 validation builds, the
+It validates classic-project source parity and Visual Studio 2005 solution
+structure, rebuilds every classic project, validates the XML schema against
+sample markup, performs C# 2.0/.NET 2.0 validation builds, runs the
 dependency-free test executables, the isolated native-marquee process, and the
 documentation site. The following switches narrow that evidence:
 
 | Switch | Skipped work | Work that still runs |
 | --- | --- | --- |
-| `-SkipClassicSolutionValidation` | Visual Studio solution validation and classic solution rebuild | Source parity, schema validation, SDK validation builds, tests, and docs |
+| `-SkipClassicSolutionValidation` | Visual Studio 2005 solution-structure validation and classic-project rebuilds | Source parity, schema validation, SDK validation builds, tests, and docs |
 | `-SkipTests` | All executable test and native-marquee runs | Test projects still compile |
 | `-SkipDocs` | VitePress dependency install and site build | Schema validation still runs |
 | `-RequireNativeMarquee` | Nothing | Converts native-marquee `SKIP` into a failed gate; it cannot be combined with `-SkipTests` |
