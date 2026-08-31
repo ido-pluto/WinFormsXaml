@@ -1,0 +1,5 @@
+<Includes>
+  <Panel Name="ConditionalItemRoot">
+    <Label Name="ConditionalItemText" Text="{Binding Text}" />
+  </Panel>
+</Includes>

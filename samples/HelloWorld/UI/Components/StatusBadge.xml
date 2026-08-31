@@ -1,0 +1,13 @@
+<Component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="../../../../schemas/WinFormsXaml.xsd">
+  <Component.Properties>
+    <Property Name="Text" />
+    <Property Name="AccentColor"
+              Type="System.Drawing.Color"
+              Default="SteelBlue" />
+  </Component.Properties>
+
+  <Label Text="{Binding Text}"
+         ForeColor="{Binding AccentColor}"
+         AutoSize="true" />
+</Component>

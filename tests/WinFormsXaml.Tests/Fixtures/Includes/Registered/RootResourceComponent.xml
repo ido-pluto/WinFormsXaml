@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component>
+  <Includes Source="RootComponentResources" />
+  <Panel>
+    <Label Name="RootResourceComponentLabel"
+           Text="component root resource" />
+  </Panel>
+</Component>

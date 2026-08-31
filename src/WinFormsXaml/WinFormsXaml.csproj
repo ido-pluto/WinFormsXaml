@@ -1,0 +1,164 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A17ED9E1-4260-4D25-90B9-527994E3DE94}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WinFormsXaml</RootNamespace>
+    <AssemblyName>WinFormsXaml</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\artifacts\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\artifacts\bin\Debug\WinFormsXaml.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\artifacts\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\artifacts\bin\Release\WinFormsXaml.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Binding\BindingExpressions.cs" />
+    <Compile Include="Binding\BindingConditionExpressions.cs" />
+    <Compile Include="Binding\PresetConditionExpressions.cs" />
+    <Compile Include="Binding\BindingSubscriptions.State.cs" />
+    <Compile Include="Binding\BindingSubscriptions.Registration.cs" />
+    <Compile Include="Binding\BindingSubscriptions.LifecycleSignals.cs" />
+    <Compile Include="Binding\BindingSubscriptions.Dispatch.cs" />
+    <Compile Include="Binding\BindingSubscriptions.Dependencies.cs" />
+    <Compile Include="Binding\BindingSourceUpdates.cs" />
+    <Compile Include="Binding\DynamicBindings.Core.cs" />
+    <Compile Include="Binding\DynamicBindingRegistry.cs" />
+    <Compile Include="Binding\DynamicBindingTargetLifetime.cs" />
+    <Compile Include="Binding\DynamicBindingSubscriptions.cs" />
+    <Compile Include="Binding\DynamicItemsIntegration.cs" />
+    <Compile Include="Binding\DynamicBindingReload.cs" />
+    <Compile Include="Binding\PresetRefresh.cs" />
+    <Compile Include="Binding\PresetLoading.cs" />
+    <Compile Include="Binding\FunctionBindings.cs" />
+    <Compile Include="Binding\ItemsBinding.cs" />
+    <Compile Include="Binding\ItemsBinding.Scrolling.cs" />
+    <Compile Include="Binding\ItemsBindingDiff.cs" />
+    <Compile Include="Binding\PropertyBinding.cs" />
+    <Compile Include="Components\ChildrenBind.cs" />
+    <Compile Include="Components\ComponentBindingIntegration.cs" />
+    <Compile Include="Components\ComponentChildrenProjection.cs" />
+    <Compile Include="Components\ComponentClrInstantiation.cs" />
+    <Compile Include="Components\ComponentInstantiation.cs" />
+    <Compile Include="Components\ComponentLifecycle.cs" />
+    <Compile Include="Components\ComponentRegistry.cs" />
+    <Compile Include="Components\IncludeRegistry.cs" />
+    <Compile Include="Controls\ApplicationIconProvider.cs" />
+    <Compile Include="Controls\CompatibleProgressBar.cs" />
+    <Compile Include="Controls\HyperlinkLabel.cs" />
+    <Compile Include="Controls\HyperlinkNavigateEventArgs.cs" />
+    <Compile Include="Controls\ImageControl.cs" />
+    <Compile Include="Controls\ItemScrollAlignment.cs" />
+    <Compile Include="Controls\ItemsControl.Diagnostics.cs" />
+    <Compile Include="Controls\ItemsControl.Lightweight.cs" />
+    <Compile Include="Controls\ItemsControl.Recycling.cs" />
+    <Compile Include="Controls\ItemsControl.Scrolling.cs" />
+    <Compile Include="Controls\ItemsControl.ScrollCache.cs" />
+    <Compile Include="Controls\ItemsControl.ScrollIntoView.cs" />
+    <Compile Include="Controls\ItemsControl.ThemedScrollBars.cs" />
+    <Compile Include="Controls\ItemsControl.cs" />
+    <Compile Include="Controls\ItemsControl.Virtualization.cs" />
+    <Compile Include="Controls\ItemsControlVirtualizationMode.cs" />
+    <Compile Include="Controls\LayoutControls.cs" />
+    <Compile Include="Controls\LegacyMouseWheelRouter.cs" />
+    <Compile Include="Controls\PublicItemsControl.cs" />
+    <Compile Include="Controls\FrameworkScrollBars.cs" />
+    <Compile Include="Controls\ScrollBarControl.cs" />
+    <Compile Include="Controls\ScrollBarControl.Geometry.cs" />
+    <Compile Include="Controls\ScrollBarControl.Input.cs" />
+    <Compile Include="Controls\ScrollBarControl.Lifecycle.cs" />
+    <Compile Include="Controls\ScrollBarControl.Rendering.cs" />
+    <Compile Include="Controls\ScrollBarStyle.cs" />
+    <Compile Include="Controls\TabView.Appearance.cs" />
+    <Compile Include="Controls\TabView.Native.cs" />
+    <Compile Include="Controls\TabView.Rendering.cs" />
+    <Compile Include="Controls\TabView.cs" />
+    <Compile Include="Controls\TabViewItem.cs" />
+    <Compile Include="Controls\TabViewSelectionChangedEventArgs.cs" />
+    <Compile Include="Layout\ItemsControlLayout.cs" />
+    <Compile Include="Layout\FlexLayoutPlanner.cs" />
+    <Compile Include="Layout\FlexPanelLayout.cs" />
+    <Compile Include="Layout\LayoutEngine.cs" />
+    <Compile Include="Loading\EmbeddedResources.cs" />
+    <Compile Include="Loading\FormDiscovery.cs" />
+    <Compile Include="Loading\IncludeComposition.cs" />
+    <Compile Include="Loading\ConditionalIncludeMetadata.cs" />
+    <Compile Include="Loading\IncludeResolution.cs" />
+    <Compile Include="Loading\MarkupXmlDocument.cs" />
+    <Compile Include="Loading\WinFormsXamlLoadException.cs" />
+    <Compile Include="Loading\XmlIncludeRequest.cs" />
+    <Compile Include="Loading\XmlForm.cs" />
+    <Compile Include="Loading\XmlForm.Threading.cs" />
+    <Compile Include="Loading\XmlFormThreadContext.cs" />
+    <Compile Include="Presets\PresetManager.cs" />
+    <Compile Include="Presets\ReactivePresetValues.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\ItemReactiveBindings.cs" />
+    <Compile Include="Rendering\ItemReactiveBindings.ObservedChanges.cs" />
+    <Compile Include="Rendering\ItemReactiveBindings.PatchTransactions.cs" />
+    <Compile Include="Rendering\ItemReactiveBindings.Queue.cs" />
+    <Compile Include="Rendering\ItemTemplateBlueprint.cs" />
+    <Compile Include="Rendering\ItemTemplateRuntime.cs" />
+    <Compile Include="Rendering\ItemTemplateRuntime.BindingCompilation.cs" />
+    <Compile Include="Rendering\ItemTemplateRuntime.Construction.cs" />
+    <Compile Include="Rendering\ItemTemplateRuntime.Expressions.cs" />
+    <Compile Include="Rendering\ItemsRefreshWork.cs" />
+    <Compile Include="Rendering\ItemsRefreshTransactions.cs" />
+    <Compile Include="Rendering\ItemsRendering.cs" />
+    <Compile Include="Rendering\RenderedItemCleanup.cs" />
+    <Compile Include="Styling\StyleState.cs" />
+    <Compile Include="Styling\ConditionalStyles.cs" />
+    <Compile Include="Virtualization\VirtualItemSourceAdapter.cs" />
+    <Compile Include="Virtualization\VirtualRangeCalculator.cs" />
+    <Compile Include="Virtualization\CrossItemControlRecycling.cs" />
+    <Compile Include="Virtualization\ItemControlRecycling.cs" />
+    <Compile Include="Virtualization\VirtualRealizationManager.cs" />
+    <Compile Include="Virtualization\VirtualizationEligibility.cs" />
+    <Compile Include="Virtualization\VirtualizationEngine.cs" />
+    <Compile Include="Virtualization\LightweightImageCache.cs" />
+    <Compile Include="Virtualization\LightweightVirtualization.Interaction.cs" />
+    <Compile Include="Virtualization\LightweightVirtualization.Painting.cs" />
+    <Compile Include="Virtualization\LightweightVirtualization.Refresh.cs" />
+    <Compile Include="Virtualization\LightweightVirtualization.Rows.cs" />
+    <Compile Include="Virtualization\LightweightVirtualization.Template.cs" />
+    <Compile Include="Virtualization\LightweightVirtualization.cs" />
+    <Compile Include="Virtualization\VirtualViewportModel.cs" />
+    <Compile Include="WinFormsXaml.Appearance.cs" />
+    <Compile Include="WinFormsXaml.Children.cs" />
+    <Compile Include="WinFormsXaml.Core.cs" />
+    <Compile Include="WinFormsXaml.EventBinding.cs" />
+    <Compile Include="WinFormsXaml.MappedProperties.cs" />
+    <Compile Include="WinFormsXaml.ObjectConfiguration.cs" />
+    <Compile Include="WinFormsXaml.PropertyAssignment.cs" />
+    <Compile Include="XamlRuntime.NamedMembers.cs" />
+    <Compile Include="WinFormsXaml.Tree.cs" />
+    <Compile Include="WinFormsXaml.Utilities.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

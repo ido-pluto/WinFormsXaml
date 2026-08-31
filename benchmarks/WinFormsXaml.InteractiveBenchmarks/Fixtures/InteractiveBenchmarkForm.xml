@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Form Name="InteractiveBenchmarkForm"
+      Text="WinFormsXaml interactive Controls virtualization"
+      Width="780"
+      Height="560"
+      StartPosition="CenterParent"
+      ShowInTaskbar="false">
+  <Grid Dock="Fill" Padding="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Label Grid.Row="0"
+           Text="10,000 nested native-control rows; mixed small and large scroll changes"
+           AutoSize="true"
+           Margin="0,0,0,8" />
+
+    <ItemsControl Name="BenchmarkRows"
+                  Grid.Row="1"
+                  ItemsSource="{Binding Rows}"
+                  ItemKeyPath="Id"
+                  ItemVersionPath="Version"
+                  AutoScroll="true"
+                  Virtualizing="true"
+                  VirtualizationThreshold="1"
+                  FixedItemSize="72"
+                  EstimatedItemSize="72"
+                  OverscanItems="3"
+                  VirtualizationCacheItems="24"
+                  ProgressiveRendering="false"
+                  Spacing="4">
+      <ItemsControl.ItemTemplate>
+        <!-- Direct CLR properties keep this representative nested row eligible
+             for the all-or-nothing compiled construction blueprint. -->
+        <Panel Size="744,72" BorderStyle="FixedSingle">
+          <CheckBox Location="8,9"
+                    Size="66,50"
+                    Text="#{Binding Id}"
+                    Checked="{Binding Selected}"
+                    AutoCheck="false" />
+
+          <Panel Location="80,5" Size="646,60">
+            <Label Location="0,2"
+                   Size="490,24"
+                   Text="{Binding Title}" />
+            <Label Location="0,30"
+                   Size="490,24"
+                   Text="{Binding Detail}" />
+            <Label Location="502,2"
+                   Size="136,22"
+                   Text="v{Binding Version}"
+                   TextAlign="MiddleRight" />
+            <ProgressBar Location="502,31"
+                         Size="136,20"
+                         Minimum="0"
+                         Maximum="100"
+                         Value="{Binding Progress}"
+                         Style="Blocks" />
+          </Panel>
+        </Panel>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </Grid>
+</Form>

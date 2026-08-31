@@ -1,0 +1,47 @@
+# Build output
+artifacts/
+bin/
+obj/
+packages/
+.nuget/
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+*.trx
+*.log
+*.nupkg
+*.snupkg
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.snk
+*.pem
+*.key
+
+# Visual Studio and IDE state
+.vs/
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.pidb
+_ReSharper*/
+*.DotSettings.user
+
+# Documentation
+/docs/node_modules/
+/docs/.vitepress/cache/
+/docs/.vitepress/dist/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+*.swp

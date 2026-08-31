@@ -1,0 +1,14 @@
+<Presets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="../../../schemas/WinFormsXaml.xsd"
+         Name="Theme"
+         Selected="Light"
+         Default="Light">
+  <Preset Name="Light">
+    <Set Key="Surface" Value="#F7F7F7" />
+    <Set Key="Foreground" Value="#202020" />
+  </Preset>
+  <Preset Name="Dark">
+    <Set Key="Surface" Value="#202020" />
+    <Set Key="Foreground" Value="#F7F7F7" />
+  </Preset>
+</Presets>

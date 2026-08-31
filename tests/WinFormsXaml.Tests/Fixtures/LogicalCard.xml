@@ -1,0 +1,8 @@
+<Component>
+  <Component.Properties>
+    <Property Name="Caption" Type="String" />
+  </Component.Properties>
+  <ToolStrip>
+    <ToolStripButton Text="{Binding Caption}" />
+  </ToolStrip>
+</Component>

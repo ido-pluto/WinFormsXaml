@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Includes>
+  <Presets Name="Theme">
+    <Preset Name="Default">
+      <Set Key="XmlLayer" Value="second-include-layer" />
+    </Preset>
+  </Presets>
+
+  <Includes.Resources>
+    <Style TargetType="Label">
+      <Setter Property="ForeColor" Value="#FF334455" />
+      <Setter Property="BorderStyle" Value="Fixed3D" />
+    </Style>
+  </Includes.Resources>
+</Includes>

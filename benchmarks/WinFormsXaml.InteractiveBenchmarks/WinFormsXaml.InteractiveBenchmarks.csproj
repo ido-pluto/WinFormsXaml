@@ -1,0 +1,66 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C8B8CDCB-BCAB-43AC-9905-8AC628770750}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WinFormsXaml.InteractiveBenchmarks</RootNamespace>
+    <AssemblyName>WinFormsXaml.InteractiveBenchmarks</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\artifacts\interactive-benchmarks\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\artifacts\interactive-benchmarks\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BenchmarkDashboard.cs" />
+    <Compile Include="BenchmarkScenario.cs" />
+    <Compile Include="BenchmarkScrollWorkload.cs" />
+    <Compile Include="DeterministicBenchmarkImage.cs" />
+    <Compile Include="PerformanceStatistics.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EmbeddedResource Include="Fixtures\InteractiveBenchmarkForm.xml">
+      <LogicalName>WinFormsXaml.InteractiveBenchmarks.Fixtures.InteractiveBenchmarkForm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fixtures\InteractiveLightweightForm.xml">
+      <LogicalName>WinFormsXaml.InteractiveBenchmarks.Fixtures.InteractiveLightweightForm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fixtures\InteractiveRecyclingForm.xml">
+      <LogicalName>WinFormsXaml.InteractiveBenchmarks.Fixtures.InteractiveRecyclingForm.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fixtures\InteractiveNonVirtualForm.xml">
+      <LogicalName>WinFormsXaml.InteractiveBenchmarks.Fixtures.InteractiveNonVirtualForm.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WinFormsXaml\WinFormsXaml.csproj">
+      <Project>{A17ED9E1-4260-4D25-90B9-527994E3DE94}</Project>
+      <Name>WinFormsXaml</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

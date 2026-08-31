@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Class="WinFormsXaml.Tests.ClassCreatedIncludesForm"
+      Name="ClassCreatedIncludesHost"
+      Text="Class-created include host">
+  <Label Name="ClassCreatedLocal"
+         Text="class-created local" />
+</Form>

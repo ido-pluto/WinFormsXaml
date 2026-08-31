@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Panel Name="ArbitraryResourcesHost">
+  <Includes Source="ArbitraryResources" />
+
+  <Panel.Resources>
+    <Presets Name="ArbitraryTheme" Selected="Default">
+      <Preset Name="Default">
+        <Set Key="Layered" Value="local-wins" />
+        <Set Key="LocalOnly" Value="local-only" />
+      </Preset>
+    </Presets>
+
+    <Style TargetType="Label">
+      <Setter Property="ForeColor" Value="#FF213141" />
+      <Setter Property="BorderStyle" Value="Fixed3D" />
+    </Style>
+  </Panel.Resources>
+
+  <Label Name="ArbitraryResourcesLabel"
+         Text="{Preset ArbitraryTheme.Layered}" />
+</Panel>

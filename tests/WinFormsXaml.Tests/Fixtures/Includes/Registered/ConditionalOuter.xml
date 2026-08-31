@@ -1,0 +1,4 @@
+<Includes>
+  <Includes Source="ConditionalTheme"
+            Condition="{Preset Feature == Enabled}" />
+</Includes>

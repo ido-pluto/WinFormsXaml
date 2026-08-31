@@ -1,0 +1,31 @@
+<Component Class="WinFormsXaml.Tests.CodeBehindCard">
+  <Component.Properties>
+    <Property Name="Title" Type="String" />
+    <Property Name="Count" Type="Int32" Default="0" />
+  </Component.Properties>
+  <Panel>
+    <Label Name="ClassTitle" Text="{Binding Title}" />
+    <Button Name="ClassButton"
+            Text="{Function FormatTitle(Title, Count)}"
+            Click="HandleClick" />
+    <ItemsControl Name="ClassRows"
+                  ReuseItems="true"
+                  ReevaluateFunctionsOnRefresh="true"
+                  Virtualizing="false"
+                  ProgressiveRendering="false">
+      <ItemsControl.ItemTemplate>
+        <Panel>
+          <Label Name="ClassRow"
+                 Text="{Function FormatItem(.)}" />
+          <Label Name="ClassRowTitle"
+                 Text="{Binding Title, Source=CodeBehind}" />
+          <Button Name="ClassRowButton"
+                  Text="Select"
+                  Click="HandleClick" />
+        </Panel>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+    <XmlOnlyBridge Value="{Binding Snapshot, Source=CodeBehind}" />
+    <Children />
+  </Panel>
+</Component>

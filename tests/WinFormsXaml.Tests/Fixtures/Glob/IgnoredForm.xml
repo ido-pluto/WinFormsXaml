@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Form Name="IgnoredComponentGlobForm"
+      Text="This Form is intentionally ignored by component glob registration" />

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Panel Name="ThemeHost">
+  <Includes Source="ThemeContent" />
+  <Includes Source="ThemeOverrides" />
+
+  <Panel.Resources>
+    <Presets Name="Theme" Selected="Default">
+      <Preset Name="Default">
+        <Set Key="Shared" Value="local-wins" />
+        <Set Key="XmlLayer" Value="local-layer" />
+        <Set Key="LocalOnly" Value="local-only" />
+      </Preset>
+    </Presets>
+
+    <Style TargetType="Label">
+      <Setter Property="ForeColor" Value="#FF445566" />
+    </Style>
+  </Panel.Resources>
+
+  <Label Name="ThemedLabel"
+         Text="{Preset Theme.Shared}"
+         Tag="{Preset Theme.IncludeOnly}" />
+</Panel>

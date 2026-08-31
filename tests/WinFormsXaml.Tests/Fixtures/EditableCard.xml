@@ -1,0 +1,14 @@
+<Component>
+  <Component.Properties>
+    <Property Name="Value" Type="String" />
+    <Property Name="Count" Type="Int32" Default="7" />
+  </Component.Properties>
+  <Panel>
+    <TextBox Name="Editor"
+             Text="{Binding Value, Mode=TwoWay}" />
+    <NumericUpDown Name="CountEditor"
+                   Value="{Binding Count, Mode=TwoWay}" />
+    <Label Name="CountLabel"
+           Text="{Binding Count}" />
+  </Panel>
+</Component>

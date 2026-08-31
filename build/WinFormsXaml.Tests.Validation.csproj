@@ -1,0 +1,198 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net20</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>WinFormsXaml.Tests</AssemblyName>
+    <RootNamespace>WinFormsXaml.Tests</RootNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <LangVersion>2</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AppConfig>../tests/WinFormsXaml.Tests/App.config</AppConfig>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../tests/WinFormsXaml.Tests/BindingAuditRegressionTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/ComponentCodeBehindTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/ConditionExpressionTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/CoreAuditRegressionTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/FormConvenienceTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/ImageControlRegressionTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/IncludesIntegrationTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/ItemTemplateResourceScopeTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/MarkupDiagnosticsTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/NotifyPropertyChangedBindingTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/PresetAuditRegressionTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/RuntimeOwnershipRegressionTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/TabViewIntegrationTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/Program.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/Properties/AssemblyInfo.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/VirtualRealizationManagerTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/VirtualizationEligibilityFocusedTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/VirtualViewportModelFocusedTests.cs" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/EmbeddedView.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.EmbeddedView.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/EmbeddedRelativeView.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.EmbeddedRelativeView.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/EmbeddedPresetHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.EmbeddedPresetHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/EmbeddedPresetValues.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.EmbeddedPresetValues.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/ReactiveCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.ReactiveCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/ContentCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.ContentCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/CodeBehindCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.CodeBehindCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/NoSlotChildrenCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.NoSlotChildrenCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/XmlOnlyBridge.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.XmlOnlyBridge.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/ThrowingChildrenCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.ThrowingChildrenCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/RollbackCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.RollbackCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/InvalidMultipleChildren.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.InvalidMultipleChildren.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/ComponentPresetCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.ComponentPresetCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/ComponentPresetValues.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.ComponentPresetValues.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/InvalidComponentContext.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.InvalidComponentContext.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/InvalidDiagnosticForm.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.InvalidDiagnosticForm.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/DiagnosticCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.DiagnosticCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/VirtualDiagnosticCondition.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.VirtualDiagnosticCondition.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/CircularDiagnosticA.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.CircularDiagnosticA.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/CircularDiagnosticB.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.CircularDiagnosticB.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/NestedDiagnosticFailure.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.NestedDiagnosticFailure.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/ForwardingCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.ForwardingCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/LogicalCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.LogicalCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/EditableCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.EditableCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/DiscoveredMainForm.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.DiscoveredMainForm.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/XmlFormHost.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.XmlFormHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/FailingOnLoadedWorkerForm.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.FailingOnLoadedWorkerForm.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/RuntimeOwnedRetryForm.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.RuntimeOwnedRetryForm.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/ConstructorLoadingForm.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.ConstructorLoadingForm.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/VirtualCloseForm.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.VirtualCloseForm.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/ConventionXmlFormHost.xml"
+                      LogicalName="WinFormsXaml.Tests.ConventionXmlFormHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Glob/GlobAlpha.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.Components.GlobAlpha.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Glob/GlobBeta.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.Components.GlobBeta.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Glob/IgnoredForm.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.Components.NonComponents.IgnoredForm.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Ambiguity/Left/SharedForm.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.Ambiguity.East.SharedForm.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Ambiguity/Right/SharedForm.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.Ambiguity.West.SharedForm.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Collision/One/SharedCard.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.Collision.One.SharedCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Collision/Two/SharedCard.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.Collision.Two.SharedCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/CaseVariants/UpperCard.xml"
+                      LogicalName="WinFormsXaml.Tests.UI.CaseVariants.SharedCaseCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/CaseVariants/LowerCard.xml"
+                      LogicalName="winformsxaml.tests.ui.casevariants.sharedcasecard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/VisualContent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.VisualContent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ThemeContent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ThemeContent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ThemeResetContent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ThemeResetContent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ThemeOverrides.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ThemeOverrides.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/NestedContent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.NestedContent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/NestedLeaf.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.NestedLeaf.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ProgrammaticContent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ProgrammaticContent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ProgrammaticSecond.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ProgrammaticSecond.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ItemCard.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ItemCard.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ArbitraryResources.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ArbitraryResources.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ComponentBody.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ComponentBody.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/IncludedComponent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.IncludedComponent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/RootComponentResources.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.RootComponentResources.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/RootResourceComponent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.RootResourceComponent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ConditionalTheme.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ConditionalTheme.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ConditionalOuter.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ConditionalOuter.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ConditionalComponentContent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ConditionalComponentContent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ConditionalItemContent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ConditionalItemContent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Registered/ConditionalStructuralContent.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Registered.ConditionalStructuralContent.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Direct/EmbeddedOnly.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Direct.EmbeddedOnly.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/VisualHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.VisualHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ThemeHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ThemeHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ThemeResetHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ThemeResetHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/NestedHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.NestedHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ProgrammaticHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ProgrammaticHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/EmbeddedHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.EmbeddedHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ComponentHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ComponentHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ItemsHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ItemsHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ArbitraryResourcesHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ArbitraryResourcesHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ClassCreatedHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ClassCreatedHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/RootResourceComponentHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.RootResourceComponentHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ConditionalHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ConditionalHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ConditionalUnknownHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ConditionalUnknownHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ConditionalComponentHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ConditionalComponentHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/ConditionalItemsHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.ConditionalItemsHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/StaticConditionalFalseHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.StaticConditionalFalseHost.xml" />
+    <EmbeddedResource Include="../tests/WinFormsXaml.Tests/Fixtures/Includes/Hosts/StaticConditionalTrueHost.xml"
+                      LogicalName="WinFormsXaml.Tests.Fixtures.Includes.Hosts.StaticConditionalTrueHost.xml" />
+    <EmbeddedResource Include="../schemas/WinFormsXaml.xsd"
+                      LogicalName="WinFormsXaml.Tests.Schema.WinFormsXaml.xsd" />
+    <None Include="../tests/WinFormsXaml.Tests/App.config" Link="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="WinFormsXaml.Validation.csproj" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net20" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Panel Name="NestedHost">
+  <Includes Source="NestedContent" />
+</Panel>

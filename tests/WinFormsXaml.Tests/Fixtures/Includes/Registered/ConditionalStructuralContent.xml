@@ -1,0 +1,5 @@
+<Includes>
+  <Grid.RowDefinitions>
+    <RowDefinition Height="*" />
+  </Grid.RowDefinitions>
+</Includes>

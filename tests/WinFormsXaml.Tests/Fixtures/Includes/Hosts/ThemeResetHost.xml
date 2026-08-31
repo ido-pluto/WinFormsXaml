@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Name="ThemeResetForm"
+      Width="640"
+      Height="480"
+      Background="{Preset Theme.Background}"
+      Foreground="{Preset Theme.TextPrimary}">
+  <Includes Source="ThemeResetContent" />
+
+  <StackPanel>
+    <DockPanel Name="SurfaceRaised"
+               Background="{Preset Theme.SurfaceRaised}" />
+    <Button Name="ThemeButton" Text="Button" />
+    <TextBox Name="ThemeTextBox" Text="Text" />
+    <CheckBox Name="ThemeCheckBox" Text="Check" />
+    <HyperlinkLabel Name="ThemeLink" Text="Link" />
+    <ProgressBar Name="ThemeProgress" />
+    <PictureBox Name="ThemePicture" />
+    <TabView Name="ThemeTabs"
+             ForceNativeTabs="{Preset Theme == Light}"
+             BackColor="{Preset Theme.TabBackground}"
+             TabBackground="{Preset Theme.TabBackground}"
+             SelectedTabBackground="{Preset Theme.TabSelectedBackground}"
+             TabForeground="{Preset Theme.TabHeaderText}"
+             SelectedTabForeground="{Preset Theme.TabSelectedText}"
+             ContentBackground="{Preset Theme.TabSelectedBackground}">
+      <TabViewItem Header="Tab" />
+    </TabView>
+    <ItemsControl Name="ThemeRows"
+                  ItemsSource="{Binding Items}"
+                  Virtualizing="false"
+                  AutoScroll="true"
+                  Background="{Preset Theme.TabSelectedBackground}">
+      <ItemsControl.VerticalScrollStyle Condition="{Preset Theme == Dark}">
+        <ScrollBarStyle TrackColor="{Preset Theme.ScrollTrack}"
+                        ThumbColor="{Preset Theme.ScrollThumb}"
+                        ArrowColor="{Preset Theme.ScrollArrow}" />
+      </ItemsControl.VerticalScrollStyle>
+      <ItemsControl.ItemTemplate>
+        <Border Name="ThemeItem"
+                Height="30"
+                Background="{Preset Theme.ItemBackground}"
+                BorderBrush="{Preset Theme.ItemBorder}"
+                BorderThickness="1">
+          <Label Text="{Binding Text}" />
+        </Border>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
+</Form>

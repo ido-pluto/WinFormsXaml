@@ -1,0 +1,9 @@
+<Component>
+  <Component.Properties>
+    <Property Name="Text" Type="String" />
+    <Property Name="TemplateShow" Type="Boolean" />
+  </Component.Properties>
+  <Panel Condition="{Binding TemplateShow}">
+    <Label AutoSize="true" Text="{Binding Text}" />
+  </Panel>
+</Component>

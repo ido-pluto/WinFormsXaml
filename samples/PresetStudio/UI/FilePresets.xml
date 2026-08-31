@@ -1,0 +1,9 @@
+<Presets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="../../../schemas/WinFormsXaml.xsd"
+         Name="Deployment"
+         Selected="LocalFile">
+  <Preset Name="LocalFile">
+    <Set Key="Note"
+         Value="This sentence came from a deployable XML file." />
+  </Preset>
+</Presets>

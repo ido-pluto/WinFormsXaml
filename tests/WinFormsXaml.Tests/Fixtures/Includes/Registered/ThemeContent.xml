@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Includes>
+  <Presets Name="Theme" Selected="Default">
+    <Preset Name="Default">
+      <Set Key="IncludeOnly" Value="include-only" />
+      <Set Key="Shared" Value="include-shared" />
+      <Set Key="XmlLayer" Value="include-layer" />
+      <Set Key="TextColor" Value="#FF112233" />
+      <Set Key="SurfaceColor" Value="#FFDDEEFF" />
+    </Preset>
+    <Preset Name="Dark">
+      <Set Key="IncludeOnly" Value="dark-include-only" />
+      <Set Key="Shared" Value="dark-include-shared" />
+      <Set Key="XmlLayer" Value="dark-include-layer" />
+      <Set Key="TextColor" Value="#FFEEDDCC" />
+      <Set Key="SurfaceColor" Value="#FF223344" />
+    </Preset>
+  </Presets>
+
+  <Includes.Resources>
+    <Style TargetType="Label">
+      <Setter Property="ForeColor"
+              Value="{Preset Theme.TextColor}" />
+      <Setter Property="BackColor"
+              Value="{Preset Theme.SurfaceColor}" />
+      <Setter Property="BorderStyle" Value="FixedSingle" />
+    </Style>
+  </Includes.Resources>
+</Includes>

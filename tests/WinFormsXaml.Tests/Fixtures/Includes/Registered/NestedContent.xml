@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Includes>
+  <Label Name="NestedOuterBefore" Text="outer-before" />
+  <Includes Source="NestedLeaf" />
+  <Label Name="NestedOuterAfter" Text="outer-after" />
+</Includes>

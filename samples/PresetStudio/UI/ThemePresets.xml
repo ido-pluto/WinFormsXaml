@@ -1,0 +1,21 @@
+<Presets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="../../../schemas/WinFormsXaml.xsd"
+         Name="Theme"
+         Selected="Light"
+         Default="Light">
+  <Preset Name="Light">
+    <Set Key="Surface" Value="#F8FAFC" />
+    <Set Key="Text" Value="#172033" />
+    <Set Key="ButtonText" Value="Use dark theme" />
+  </Preset>
+  <Preset Name="Dark">
+    <Set Key="Surface" Value="#172033" />
+    <Set Key="Text" Value="#F8FAFC" />
+    <Set Key="ButtonText" Value="Use light theme" />
+  </Preset>
+  <Preset Name="HighContrast">
+    <Set Key="Surface" Value="Black" />
+    <Set Key="Text" Value="Yellow" />
+    <Set Key="ButtonText" Value="Use light theme" />
+  </Preset>
+</Presets>

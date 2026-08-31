@@ -1,0 +1,6 @@
+<Form Class="WinFormsXaml.Tests.FailingOnLoadedWorkerXmlFormHost"
+      Name="FailingOnLoadedWorkerForm"
+      Text="Failing OnLoaded worker form">
+  <Button Name="FailingWorkerAction"
+          Text="Run" />
+</Form>

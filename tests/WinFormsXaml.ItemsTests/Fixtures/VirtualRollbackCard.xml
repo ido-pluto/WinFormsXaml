@@ -1,0 +1,8 @@
+<Component>
+  <Component.Properties>
+    <Property Name="TemplateShow" Type="Boolean" />
+  </Component.Properties>
+  <Panel Condition="{Binding TemplateShow}">
+    <Label AutoSize="true" Text="{Function GetRollbackText()}" />
+  </Panel>
+</Component>

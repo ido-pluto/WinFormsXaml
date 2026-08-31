@@ -1,0 +1,15 @@
+<Panel>
+  <Presets Name="Feature" Selected="Disabled" Default="Disabled">
+    <Preset Name="Disabled" />
+    <Preset Name="Enabled" />
+  </Presets>
+  <ItemsControl Name="ConditionalRows"
+                ItemsSource="{Binding Items}"
+                ProgressiveRendering="false"
+                Virtualizing="false">
+    <ItemsControl.ItemTemplate>
+      <Includes Source="ConditionalItemContent"
+                Condition="{Preset Feature == Enabled}" />
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</Panel>

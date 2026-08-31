@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>WinFormsXaml</id>
+    <version>0.1.0</version>
+    <title>WinFormsXaml</title>
+    <authors>ido-pluto</authors>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/ido-pluto/WinFormsXaml</projectUrl>
+    <repository type="git" url="https://github.com/ido-pluto/WinFormsXaml.git" />
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A lightweight XML UI runtime for Windows Forms with reactive one-way and two-way bindings, dynamic presets, reusable components, layout containers, and virtualized repeating content.</description>
+    <language>en-US</language>
+    <tags>winforms windows-forms xaml xml ui net20 binding two-way-binding intellisense virtualized legacy-windows</tags>
+    <readme>README.md</readme>
+    <dependencies>
+      <group targetFramework=".NETFramework2.0" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework="net20" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework="net20" />
+      <frameworkAssembly assemblyName="System.Drawing" targetFramework="net20" />
+      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net20" />
+      <frameworkAssembly assemblyName="System.Xml" targetFramework="net20" />
+    </frameworkAssemblies>
+    <contentFiles>
+      <files include="any/any/WinFormsXaml.xsd" buildAction="None" copyToOutput="false" flatten="true" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="lib/net20/WinFormsXaml.dll" target="lib/net20" />
+    <file src="lib/net20/WinFormsXaml.pdb" target="lib/net20" />
+    <file src="lib/net20/WinFormsXaml.xml" target="lib/net20" />
+    <file src="content/WinFormsXaml.xsd" target="content" />
+    <file src="contentFiles/any/any/WinFormsXaml.xsd" target="contentFiles/any/any" />
+    <file src="schemas/WinFormsXaml.xsd" target="schemas" />
+    <file src="README.md" target="" />
+  </files>
+</package>

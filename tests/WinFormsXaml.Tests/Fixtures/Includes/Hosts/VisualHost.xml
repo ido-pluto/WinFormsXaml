@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Panel Name="VisualHost">
+  <Label Name="AuthoredBefore" Text="authored-before" />
+  <Includes Source="VisualContent" />
+  <Label Name="AuthoredAfter" Text="authored-after" />
+</Panel>

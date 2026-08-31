@@ -1,0 +1,7 @@
+<Form Class="WinFormsXaml.Tests.DiscoveredMainFormCodeBehind"
+      Name="DiscoveredMainForm"
+      Text="Discovered form">
+  <Button Name="DiscoveryAction"
+          Text="Run"
+          Click="Action_Click" />
+</Form>

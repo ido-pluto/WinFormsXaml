@@ -1,0 +1,18 @@
+<Panel>
+  <Presets Name="Theme" Selected="Light" Default="Light">
+    <Preset Name="Light" />
+    <Preset Name="Dark" />
+  </Presets>
+  <Presets Name="Feature" Selected="Disabled" Default="Disabled">
+    <Preset Name="Disabled" />
+    <Preset Name="Enabled" />
+  </Presets>
+
+  <Label Name="ConditionalBefore" Text="Before" />
+  <Includes Source="ConditionalOuter"
+            Condition="{Preset Theme == Dark}" />
+  <Label Name="ConditionalAfter" Text="After" />
+  <Label Name="ConditionalStyleConsumer"
+         ResourceStyle="ConditionalAccent"
+         Text="Styled outside include" />
+</Panel>

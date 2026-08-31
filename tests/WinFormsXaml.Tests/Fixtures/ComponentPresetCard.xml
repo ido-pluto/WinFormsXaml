@@ -1,0 +1,7 @@
+<Component>
+  <Panel>
+    <Presets Source="WinFormsXaml.Tests.Fixtures.ComponentPresetValues.xml"
+             SourceKind="EmbeddedResource" />
+    <Label Text="{Preset ComponentTheme.Caption}" />
+  </Panel>
+</Component>

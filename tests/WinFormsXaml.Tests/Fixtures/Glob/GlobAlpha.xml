@@ -1,0 +1,6 @@
+<Component>
+  <Component.Properties>
+    <Property Name="Caption" Type="String" Default="Alpha" />
+  </Component.Properties>
+  <Label Text="{Binding Caption}" />
+</Component>

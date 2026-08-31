@@ -1,0 +1,6 @@
+<Form Class="WinFormsXaml.Tests.RuntimeOwnedRetryXmlFormHost"
+      Name="RuntimeOwnedRetryForm"
+      Text="Runtime-owned retry form">
+  <Label Name="RuntimeOwnedRetryLabel"
+         Text="Retry" />
+</Form>

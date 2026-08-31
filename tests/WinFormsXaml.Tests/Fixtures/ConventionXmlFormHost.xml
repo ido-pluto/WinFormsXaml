@@ -1,0 +1,6 @@
+<Form Class="WinFormsXaml.Tests.ConventionXmlFormHost"
+      Name="ConventionXmlForm"
+      Text="Convention-backed form">
+  <Label Name="ConventionMessage"
+         Text="{Binding Message}" />
+</Form>

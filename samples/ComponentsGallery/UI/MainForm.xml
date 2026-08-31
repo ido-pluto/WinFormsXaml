@@ -1,0 +1,54 @@
+<Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../../schemas/WinFormsXaml.xsd"
+      Class="ComponentsGallery.UI.MainForm"
+      Name="MainForm"
+      Text="WinFormsXaml components gallery"
+      Width="760"
+      Height="500"
+      StartPosition="CenterScreen">
+  <StackPanel Margin="16" Padding="12">
+    <Label Text="Reusable XML components"
+           FontSize="14"
+           FontWeight="Bold"
+           AutoSize="true"
+           Margin="0,0,0,10" />
+
+    <GalleryCard Name="EditableCard"
+                 Title="{Binding CardTitle, Mode=TwoWay}"
+                 AccentColor="RoyalBlue"
+                 OuterMargin="0,0,0,12">
+      <FlexPanel Name="CallerActions"
+                 Direction="Row"
+                 AlignItems="Center"
+                 Gap="8">
+        <TextBox Name="TitleEditor"
+                 Text="{Binding CardTitle, Mode=TwoWay}"
+                 FlexGrow="1" />
+        <Button Text="Increment"
+                Click="Increment_Click" />
+        <Button Text="Reset"
+                Click="Reset_Click" />
+      </FlexPanel>
+    </GalleryCard>
+
+    <FlexPanel Direction="Row"
+               Wrap="true"
+               AlignItems="Stretch"
+               Gap="10"
+               Margin="0,0,0,12">
+      <MetricTile Caption="Inline literal"
+                  Value="24"
+                  AccentColor="SeaGreen" />
+      <MetricTile Caption="Reactive clicks"
+                  Value="{Binding ClickCount}"
+                  AccentColor="RoyalBlue" />
+      <MetricTile Caption="Title length"
+                  Value="{Binding TitleLength}"
+                  AccentColor="DarkOrange" />
+    </FlexPanel>
+
+    <Label Text="{Binding Status}"
+           AutoSize="true"
+           ForeColor="#334155" />
+  </StackPanel>
+</Form>

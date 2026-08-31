@@ -1,0 +1,8 @@
+<Panel>
+  <Presets Name="Feature" Selected="Disabled" Default="Disabled">
+    <Preset Name="Disabled" />
+    <Preset Name="Enabled" />
+  </Presets>
+  <Includes Source="ConditionalComponentContent"
+            Condition="{Preset Feature == Enabled}" />
+</Panel>

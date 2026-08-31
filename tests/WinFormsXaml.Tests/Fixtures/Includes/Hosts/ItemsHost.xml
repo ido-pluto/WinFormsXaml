@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Panel Name="ItemsHost">
+  <ItemsControl Name="IncludedRows"
+                ItemsSource="{Binding Items}"
+                ProgressiveRendering="false"
+                Virtualizing="false">
+    <ItemsControl.ItemTemplate>
+      <Includes Source="ItemCard" />
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</Panel>

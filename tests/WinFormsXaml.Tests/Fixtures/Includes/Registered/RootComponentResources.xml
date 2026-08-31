@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Includes>
+  <Includes.Resources>
+    <Style TargetType="Label">
+      <Setter Property="BackColor" Value="#FFABCDEF" />
+    </Style>
+  </Includes.Resources>
+</Includes>

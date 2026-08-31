@@ -1,0 +1,4 @@
+<Component>
+  <Panel Name="VirtualDiagnosticRoot"
+    Condition="{Binding Missing, Source=CodeBehind}" />
+</Component>

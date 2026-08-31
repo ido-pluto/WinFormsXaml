@@ -1,0 +1,16 @@
+<Component>
+  <Component.Properties>
+    <Property Name="Caption" Type="String" />
+  </Component.Properties>
+  <Panel>
+    <Panel.Resources>
+      <Style TargetType="Label">
+        <Setter Property="Text" Value="{Binding Caption}" />
+      </Style>
+    </Panel.Resources>
+    <Label AutoSize="true">
+      <Label.Text>{Binding Caption}</Label.Text>
+    </Label>
+    <Label AutoSize="true" />
+  </Panel>
+</Component>

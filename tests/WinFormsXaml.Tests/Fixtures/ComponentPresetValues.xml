@@ -1,0 +1,5 @@
+<Presets Name="ComponentTheme" Selected="Default">
+  <Preset Name="Default">
+    <Set Key="Caption" Value="Resolved from component assembly" />
+  </Preset>
+</Presets>

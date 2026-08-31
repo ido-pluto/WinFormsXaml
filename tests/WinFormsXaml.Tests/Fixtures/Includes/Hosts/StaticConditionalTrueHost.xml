@@ -1,0 +1,9 @@
+<Panel>
+  <Presets Name="Theme" Selected="Light" Default="Light">
+    <Preset Name="Light" />
+    <Preset Name="Dark" />
+  </Presets>
+  <Label Name="StaticBefore" Text="Before" />
+  <Includes Source="ConditionalTheme" Condition="true" />
+  <Label Name="StaticAfter" Text="After" />
+</Panel>

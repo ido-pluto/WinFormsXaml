@@ -1,0 +1,80 @@
+<Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../../schemas/WinFormsXaml.xsd"
+      Class="BindingPlayground.UI.MainForm"
+      Name="MainForm"
+      Text="WinFormsXaml binding playground"
+      Width="620"
+      Height="590"
+      StartPosition="CenterScreen">
+  <Form.Resources>
+    <Style TargetType="Label">
+      <Setter Property="AutoSize" Value="true" />
+      <Setter Property="Margin" Value="0,0,0,6" />
+    </Style>
+  </Form.Resources>
+
+  <StackPanel Margin="18" Padding="14">
+    <Label Text="Reactive and two-way bindings"
+           FontSize="13"
+           FontWeight="Bold" />
+
+    <Label Text="{Function BuildSummary(Header, CurrentProfile.DisplayName)}"
+           ForeColor="#1D4ED8" />
+
+    <Label Text="Header (PropertyBinding&lt;string&gt;)" />
+    <TextBox Text="{Binding Header, Mode=TwoWay}"
+             Margin="0,0,0,10" />
+
+    <Label Text="Nested PropertyBinding&lt;string&gt; path" />
+    <TextBox Text="{Binding CurrentProfile.DisplayName, Mode=TwoWay}"
+             Margin="0,0,0,10" />
+
+    <CheckBox Text="Ready"
+              Checked="{Binding IsReady, Mode=TwoWay}"
+              Margin="0,0,0,8" />
+
+    <Label Text="Deferred TwoWay writeback" />
+    <TextBox Name="LostFocusDraftBox"
+             Text="{Binding LostFocusDraft, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+             Margin="0,0,0,6" />
+    <FlexPanel Direction="Row"
+               Gap="8"
+               Margin="0,0,0,6">
+      <TextBox Name="ExplicitDraftBox"
+               Text="{Binding ExplicitDraft, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+               FlexGrow="1" />
+      <Button Text="Commit explicit edit"
+              Click="CommitExplicit_Click" />
+    </FlexPanel>
+    <Label Text="{Function BuildDeferredSummary(LostFocusDraft, ExplicitDraft)}"
+           ForeColor="#6B21A8"
+           Margin="0,0,0,8" />
+
+    <FlexPanel Direction="Row"
+               Gap="8"
+               Margin="0,0,0,10">
+      <Button Text="Set header from C#"
+              Click="SetHeader_Click" />
+      <Button Text="Toggle ready"
+              Click="ToggleReady_Click" />
+      <Button Text="Only visible while ready"
+              Condition="{Binding IsReady}" />
+      <ProgressBar Width="90"
+                   Height="18"
+                   Style="Marquee"
+                   MarqueeAnimationSpeed="30"
+                   Visible="{Binding !IsReady}" />
+    </FlexPanel>
+
+    <Label Text="{Binding ChangeNotice}"
+           ForeColor="#166534" />
+
+    <FlexPanel Direction="Row" Gap="8">
+      <Label Name="ManualCaption"
+             Text="{Binding ManualCaption}"
+             FlexGrow="1" />
+      <Button Text="Change + ReloadBinding"
+              Click="ReloadManual_Click" />
+    </FlexPanel>
+  </StackPanel>
+</Form>

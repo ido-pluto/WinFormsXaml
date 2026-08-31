@@ -1,0 +1,5 @@
+<Component Class="WinFormsXaml.Tests.ThrowingChildrenCodeBehind">
+  <ThrowingAddPanel>
+    <Children />
+  </ThrowingAddPanel>
+</Component>

@@ -1,0 +1,7 @@
+<Form Class="WinFormsXaml.Tests.EmbeddedXmlFormHost"
+      Name="EmbeddedXmlForm"
+      Text="XML-backed form">
+  <Button Name="HostAction"
+          Text="Run"
+          Click="Action_Click" />
+</Form>

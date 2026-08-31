@@ -1,0 +1,13 @@
+<Component>
+  <Component.Properties>
+    <Property Name="Value" Type="String" />
+  </Component.Properties>
+  <Panel>
+    <Label Name="BridgeValue" Text="{Binding Value}" />
+    <Label Name="BridgeOwnerTitle"
+           Text="{Binding Title, Source=CodeBehind}" />
+    <Button Name="BridgeButton"
+            Text="Bridge"
+            Click="HandleClick" />
+  </Panel>
+</Component>

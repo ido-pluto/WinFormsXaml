@@ -1,0 +1,204 @@
+<Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../../schemas/WinFormsXaml.xsd"
+      Class="ItemsExplorer.UI.MainForm"
+      Name="MainForm"
+      Text="WinFormsXaml ItemsControl explorer"
+      Width="760"
+      Height="560"
+      StartPosition="CenterScreen">
+  <TabControl Dock="Fill">
+    <TabPage Text="Simple list">
+      <Grid Dock="Fill" Margin="12">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <FlexPanel Grid.Row="0"
+                   Direction="Row"
+                   Gap="8"
+                   Margin="0,0,0,10">
+          <Button Text="Add row"
+                  Click="AddRow_Click" />
+          <Button Text="Rename first row"
+                  Click="RenameFirst_Click" />
+          <Button Text="Replace with small diff"
+                  Click="ReplaceRows_Click" />
+        </FlexPanel>
+
+        <ItemsControl Name="RecentResults"
+                      Grid.Row="1"
+                      ItemsSource="{Binding RecentRows}"
+                      AutoScroll="true"
+                      ProgressiveRendering="false"
+                      Virtualizing="false"
+                      Spacing="5">
+          <ItemsControl.ItemTemplate>
+            <Border Padding="8"
+                    BorderBrush="#D4D4D8"
+                    BorderThickness="1"
+                    Condition="{Binding IsVisible}">
+              <FlexPanel Direction="Row" Gap="8">
+                <Label Text="{Binding Id}"
+                       Width="36" />
+                <TextBox Text="{Binding Title, Mode=TwoWay}"
+                         FlexGrow="1" />
+                <Button Text="Hide"
+                        Tag="{Binding .}"
+                        Click="ToggleRow_Click" />
+              </FlexPanel>
+            </Border>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Grid>
+    </TabPage>
+
+    <TabPage Text="2,500 virtual rows">
+      <Grid Dock="Fill" Margin="12">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <FlexPanel Grid.Row="0"
+                   Direction="Row"
+                   AlignItems="Center"
+                   Gap="8"
+                   Margin="0,0,0,10">
+          <Label Text="Stable keys + versions + fixed row height"
+                 AutoSize="true"
+                 FlexGrow="1" />
+          <Button Text="Jump to middle"
+                  Click="JumpToMiddle_Click" />
+        </FlexPanel>
+
+        <ItemsControl Name="LargeResults"
+                      Grid.Row="1"
+                      ItemsSource="{Binding LargeRows}"
+                      ItemKeyPath="Id"
+                      ItemVersionPath="Version"
+                      FixedItemSize="40"
+                      Spacing="3"
+                      AutoScroll="true"
+                      Virtualizing="true"
+                      VirtualizationThreshold="64"
+                      OverscanItems="3"
+                      VirtualizationCacheItems="20">
+          <ItemsControl.ItemTemplate>
+            <Border Height="40"
+                    Padding="8,4"
+                    BorderBrush="#E4E4E7"
+                    BorderThickness="1">
+              <FlexPanel Direction="Row"
+                         AlignItems="Center"
+                         Gap="10">
+                <Label Text="#{Binding Id}"
+                       Width="70" />
+                <Label Text="{Binding Title}"
+                       FlexGrow="1" />
+                <Label Text="v{Binding Version}"
+                       Width="55" />
+              </FlexPanel>
+            </Border>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Grid>
+    </TabPage>
+
+    <TabPage Text="Lightweight paint">
+      <Grid Dock="Fill" Margin="12">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <FlexPanel Grid.Row="0"
+                   Direction="Row"
+                   AlignItems="Center"
+                   Gap="8"
+                   Margin="0,0,0,10">
+          <Label Text="One owner-drawn surface; no Control tree per row"
+                 AutoSize="true"
+                 FlexGrow="1" />
+          <Button Text="Jump to middle"
+                  Click="JumpLightweightToMiddle_Click" />
+        </FlexPanel>
+
+        <ItemsControl Name="LightweightResults"
+                      Grid.Row="1"
+                      ItemsSource="{Binding LargeRows}"
+                      VirtualizationMode="Lightweight"
+                      Virtualizing="true"
+                      AutoScroll="true"
+                      Orientation="Vertical"
+                      FixedItemSize="44"
+                      Spacing="2"
+                      OverscanItems="4">
+          <ItemsControl.ItemTemplate>
+            <Border Padding="8,4"
+                    Background="#FFFFFF"
+                    BorderBrush="#D4D4D8"
+                    BorderThickness="1">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <Label Width="70" Text="#{Binding Id}" />
+                <CheckBox Width="95"
+                          Text="Visible"
+                          Checked="{Binding IsVisible, Mode=TwoWay}" />
+                <Label Width="430"
+                       Text="{Binding Title}"
+                       AutoEllipsis="true" />
+                <HyperlinkLabel Width="70"
+                                Text="Docs"
+                                NavigateUri="{Binding Url}" />
+              </StackPanel>
+            </Border>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Grid>
+    </TabPage>
+
+    <TabPage Text="Explicit recycling">
+      <Grid Dock="Fill" Margin="12">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <FlexPanel Grid.Row="0"
+                   Direction="Row"
+                   AlignItems="Center"
+                   Gap="8"
+                   Margin="0,0,0,10">
+          <Label Text="Native row Controls with an explicit reset contract"
+                 AutoSize="true"
+                 FlexGrow="1" />
+          <Button Text="Jump to middle"
+                  Click="JumpRecyclingToMiddle_Click" />
+        </FlexPanel>
+
+        <ItemsControl Name="RecyclingResults"
+                      Grid.Row="1"
+                      ItemsSource="{Binding LargeRows}"
+                      ItemKeyPath="Id"
+                      FixedItemSize="40"
+                      Spacing="3"
+                      AutoScroll="true"
+                      Virtualizing="true"
+                      VirtualizationMode="Controls"
+                      VirtualizationThreshold="1"
+                      OverscanItems="3"
+                      VirtualizationCacheItems="20"
+                      ItemRecycling="Explicit">
+          <ItemsControl.ItemTemplate>
+            <RecyclableRowPanel Height="40"
+                                Padding="8,4"
+                                BorderStyle="FixedSingle">
+              <Label Dock="Fill"
+                     Text="#{Binding Id}  {Binding Title}" />
+            </RecyclableRowPanel>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Grid>
+    </TabPage>
+  </TabControl>
+</Form>

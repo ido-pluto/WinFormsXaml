@@ -1,0 +1,95 @@
+name: Bug report
+description: Report incorrect runtime, markup, layout, binding, or packaging behavior.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve WinFormsXaml. A small deterministic reproduction, with XML and C# when relevant, is the fastest way to make a problem actionable.
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened?
+      description: Describe the observed result and the result you expected.
+      placeholder: The form shows... I expected...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: List the smallest deterministic setup and actions that produce the result.
+      placeholder: 1. Load... 2. Change... 3. Observe...
+    validations:
+      required: true
+
+  - type: textarea
+    id: xml
+    attributes:
+      label: Minimal XML
+      description: When markup is involved, include the smallest Form or component that reproduces the problem.
+      render: xml
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Minimal C# code-behind
+      description: Include binding fields, item models, functions, and event handlers used by the XML. Remove secrets and unrelated application code.
+      render: csharp
+
+  - type: input
+    id: package-version
+    attributes:
+      label: WinFormsXaml version
+      placeholder: 0.1.0-preview.1 or a commit identifier
+    validations:
+      required: true
+
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: .NET runtime
+      options:
+        - .NET Framework 2.0
+        - .NET Framework 3.5
+        - .NET Framework 4.x
+        - Wine or Mono
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      description: Include the Windows edition and service pack, or the Wine/Mono host and version.
+      placeholder: Windows 98 SE, Windows 11 24H2, Wine 10 on macOS, ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Exception and diagnostics
+      description: Include the complete exception chain and WinFormsXamlLoadException source, path, property, line, and position when available.
+      render: text
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Add screenshots, item counts, virtualization settings, or a note about whether visual styles are enabled when relevant.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: I identified whether this evidence comes from native Windows, a Windows 98 guest, Wine, or Mono, and did not treat one environment as evidence for another.
+          required: true

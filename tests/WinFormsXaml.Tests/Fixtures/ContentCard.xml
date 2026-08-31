@@ -1,0 +1,10 @@
+<Component>
+  <Component.Properties>
+    <Property Name="Title" Type="String" Default="Untitled" />
+  </Component.Properties>
+  <Panel>
+    <Label Name="TemplateTitle"
+           Text="{Binding Title}" />
+    <Children />
+  </Panel>
+</Component>

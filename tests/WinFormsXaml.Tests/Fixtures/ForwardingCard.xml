@@ -1,0 +1,6 @@
+<Component>
+  <Component.Properties>
+    <Property Name="OuterCaption" Type="String" />
+  </Component.Properties>
+  <ReactiveCard Caption="{Binding OuterCaption}" />
+</Component>

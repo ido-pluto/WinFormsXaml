@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net20</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>WinFormsXaml.Benchmarks</AssemblyName>
+    <RootNamespace>WinFormsXaml.Benchmarks</RootNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <LangVersion>2</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AppConfig>../benchmarks/WinFormsXaml.Benchmarks/App.config</AppConfig>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../benchmarks/WinFormsXaml.Benchmarks/Program.cs" />
+    <Compile Include="../benchmarks/WinFormsXaml.Benchmarks/Properties/AssemblyInfo.cs" />
+    <None Include="../benchmarks/WinFormsXaml.Benchmarks/App.config" Link="App.config" />
+    <EmbeddedResource Include="../benchmarks/WinFormsXaml.Benchmarks/Fixtures/BenchmarkCard.xml"
+                      Link="Fixtures/BenchmarkCard.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="WinFormsXaml.Validation.csproj" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net20" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+</Project>

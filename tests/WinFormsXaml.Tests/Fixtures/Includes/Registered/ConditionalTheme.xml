@@ -1,0 +1,23 @@
+<Includes>
+  <Includes.Resources>
+    <Style Key="ConditionalAccent" TargetType="Label">
+      <Setter Property="BackColor" Value="{Preset Theme.Accent}" />
+      <Setter Property="ForeColor" Value="White" />
+    </Style>
+  </Includes.Resources>
+
+  <Presets Name="Theme">
+    <Preset Name="Light">
+      <Set Key="Accent" Value="#E5E7EB" />
+      <Set Key="IncludedKey" Value="included-light" />
+    </Preset>
+    <Preset Name="Dark">
+      <Set Key="Accent" Value="#23272E" />
+      <Set Key="IncludedKey" Value="included-dark" />
+    </Preset>
+  </Presets>
+
+  <Label Name="ConditionalIncluded"
+         ResourceStyle="ConditionalAccent"
+         Text="Conditional content" />
+</Includes>

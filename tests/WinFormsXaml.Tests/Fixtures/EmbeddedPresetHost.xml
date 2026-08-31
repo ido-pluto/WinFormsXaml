@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Form Name="EmbeddedPresetHost">
+  <Presets Source="WinFormsXaml.Tests.Fixtures.EmbeddedPresetValues.xml"
+           SourceKind="EmbeddedResource" />
+  <Label Name="EmbeddedPresetLabel"
+         Text="{Preset EmbeddedValues.Caption}" />
+</Form>

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net20</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>WinFormsXaml.HelloWorld</AssemblyName>
+    <RootNamespace>HelloWorld</RootNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <LangVersion>2</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AppConfig>../samples/HelloWorld/App.config</AppConfig>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../samples/HelloWorld/Program.cs" />
+    <Compile Include="../samples/HelloWorld/UI/MainForm.cs" />
+    <Compile Include="../samples/HelloWorld/Properties/AssemblyInfo.cs" />
+    <EmbeddedResource Include="../samples/HelloWorld/UI/MainForm.xml"
+                      LogicalName="HelloWorld.UI.MainForm.xml" />
+    <EmbeddedResource Include="../samples/HelloWorld/UI/Components/StatusBadge.xml"
+                      LogicalName="HelloWorld.UI.Components.StatusBadge.xml" />
+    <None Include="../samples/HelloWorld/App.config" Link="App.config" />
+    <None Include="../samples/HelloWorld/UI/ThemePresets.xml"
+          Link="UI/ThemePresets.xml" />
+    <None Include="../schemas/WinFormsXaml.xsd"
+          Link="WinFormsXaml.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="WinFormsXaml.Validation.csproj" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net20" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+</Project>

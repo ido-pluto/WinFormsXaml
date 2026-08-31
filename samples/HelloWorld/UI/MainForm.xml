@@ -1,0 +1,76 @@
+<Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../../schemas/WinFormsXaml.xsd"
+      Class="HelloWorld.UI.MainForm"
+      Name="MainForm"
+      Text="WinFormsXaml sample"
+      Width="520"
+      Height="420"
+      StartPosition="CenterScreen">
+  <Presets Name="Theme" Selected="Light" Default="Light">
+    <Preset Name="Light">
+      <Set Key="PageColor" Value="#F7F7F7" />
+      <Set Key="TextColor" Value="#202020" />
+      <Set Key="AccentColor" Value="#2563EB" />
+    </Preset>
+    <Preset Name="Dark">
+      <Set Key="PageColor" Value="#202020" />
+      <Set Key="TextColor" Value="#F7F7F7" />
+      <Set Key="AccentColor" Value="#60A5FA" />
+    </Preset>
+  </Presets>
+
+  <StackPanel Margin="16"
+              Padding="12"
+              BackColor="{Preset Theme.PageColor}"
+              ForeColor="{Preset Theme.TextColor}">
+    <FlexPanel Direction="Row"
+               AlignItems="Center"
+               Gap="8">
+      <Image Source="{Binding SampleImage}"
+             Stretch="Uniform"
+             Width="32"
+             Height="32" />
+      <Label Text="{Binding Heading}"
+             AutoSize="true"
+             ForeColor="{Preset Theme.TextColor}" />
+    </FlexPanel>
+
+    <HyperlinkLabel Content="Open the WinForms documentation"
+                    NavigateUri="https://learn.microsoft.com/dotnet/desktop/winforms/"
+                    LinkBehavior="HoverUnderline"
+                    AutoSize="true"
+                    Margin="0,6,0,0" />
+
+    <ProgressBar Height="18"
+                 Margin="0,12,0,12"
+                 Style="Marquee"
+                 MarqueeAnimationSpeed="35"
+                 ForeColor="{Preset Theme.AccentColor}" />
+
+    <TextBox Text="{Binding Heading, Mode=TwoWay}"
+             Margin="0,8,0,0" />
+
+    <Button Text="Update reactive state"
+            Margin="0,8,0,8"
+            Click="ChangeHeading_Click" />
+
+    <Button Text="Switch preset"
+            Margin="0,0,0,8"
+            BackColor="{Preset Theme.AccentColor}"
+            ForeColor="{Preset Theme.TextColor}"
+            Click="ToggleTheme_Click" />
+
+    <ItemsControl ItemsSource="{Binding Results}">
+      <ItemsControl.ItemTemplate>
+        <Button Text="{Binding Title}"
+                Tag="{Binding .}"
+                Enabled="{Binding CanOpenResults, Source=CodeBehind}"
+                Margin="0,0,0,4"
+                Click="Result_Click" />
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <StatusBadge Text="{Binding StatusText}"
+                 AccentColor="{Preset Theme.TextColor}" />
+  </StackPanel>
+</Form>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Includes>
+  <Presets Name="Theme" Selected="Light" Default="Light">
+    <Preset Name="Light">
+      <Set Key="ItemBorder" Value="#D1D5DB" />
+      <Set Key="TextPrimary" Value="#111827" />
+      <Set Key="TextSecondary" Value="#5B6472" />
+      <Set Key="InputText" Value="#111827" />
+      <Set Key="Link" Value="#155EEF" />
+      <Set Key="LinkActive" Value="#004EEB" />
+      <Set Key="LinkVisited" Value="#6D28D9" />
+      <Set Key="Accent" Value="#2563EB" />
+      <Set Key="Background" Value="Transparent" />
+      <Set Key="ItemBackground" Value="Transparent" />
+    </Preset>
+    <Preset Name="Dark">
+      <Set Key="Background" Value="#1B1E23" />
+      <Set Key="Surface" Value="#23272E" />
+      <Set Key="SurfaceRaised" Value="#2B3038" />
+      <Set Key="TabBackground" Value="#1F2329" />
+      <Set Key="TabSelectedBackground" Value="#2B3038" />
+      <Set Key="TabHeaderText" Value="#AEB6C2" />
+      <Set Key="TabSelectedText" Value="#F3F5F7" />
+      <Set Key="ItemBackground" Value="#262B32" />
+      <Set Key="ItemBorder" Value="#454C57" />
+      <Set Key="TextPrimary" Value="#F3F5F7" />
+      <Set Key="TextSecondary" Value="#AEB6C2" />
+      <Set Key="InputBackground" Value="#171A1F" />
+      <Set Key="InputText" Value="#F8FAFC" />
+      <Set Key="ButtonBackground" Value="#3A414B" />
+      <Set Key="ButtonText" Value="#F8FAFC" />
+      <Set Key="Link" Value="#69AEFF" />
+      <Set Key="LinkActive" Value="#9BC7FF" />
+      <Set Key="LinkVisited" Value="#C4A7FF" />
+      <Set Key="Accent" Value="#4F9DFF" />
+      <Set Key="ScrollTrack" Value="#171A1F" />
+      <Set Key="ScrollThumb" Value="#596270" />
+      <Set Key="ScrollThumbHover" Value="#6B7584" />
+      <Set Key="ScrollThumbPressed" Value="#7C8797" />
+      <Set Key="ScrollArrow" Value="#AEB6C2" />
+      <Set Key="ScrollArrowHover" Value="#F3F5F7" />
+      <Set Key="ScrollBorder" Value="#454C57" />
+    </Preset>
+  </Presets>
+
+  <Includes.Resources>
+    <Style TargetType="Label">
+      <Setter Property="BackColor" Value="Transparent" />
+      <Setter Property="ForeColor" Value="{Preset Theme.TextPrimary}" />
+    </Style>
+    <Style TargetType="Button" Condition="{Preset Theme == Dark}">
+      <Setter Property="BackColor" Value="{Preset Theme.ButtonBackground}" />
+      <Setter Property="ForeColor" Value="{Preset Theme.ButtonText}" />
+      <Setter Property="FlatStyle" Value="Popup" />
+      <Setter Property="UseVisualStyleBackColor" Value="false" />
+    </Style>
+    <Style TargetType="TextBox">
+      <Setter Property="BackColor" Value="{Preset Theme.InputBackground}" />
+      <Setter Property="ForeColor" Value="{Preset Theme.InputText}" />
+      <Setter Property="BorderStyle" Value="FixedSingle" />
+    </Style>
+    <Style TargetType="CheckBox">
+      <Setter Property="BackColor" Value="Transparent" />
+      <Setter Property="ForeColor" Value="{Preset Theme.TextPrimary}" />
+      <Setter Property="UseVisualStyleBackColor" Value="false" />
+    </Style>
+    <Style TargetType="HyperlinkLabel">
+      <Setter Property="BackColor" Value="Transparent" />
+      <Setter Property="ForeColor" Value="{Preset Theme.TextPrimary}" />
+      <Setter Property="LinkColor" Value="{Preset Theme.Link}" />
+      <Setter Property="ActiveLinkColor" Value="{Preset Theme.LinkActive}" />
+      <Setter Property="VisitedLinkColor" Value="{Preset Theme.LinkVisited}" />
+    </Style>
+    <Style TargetType="ProgressBar">
+      <Setter Property="BackColor" Value="{Preset Theme.InputBackground}" />
+      <Setter Property="ForeColor" Value="{Preset Theme.Accent}" />
+    </Style>
+    <Style TargetType="PictureBox">
+      <Setter Property="BackColor" Value="{Preset Theme.Surface}" />
+    </Style>
+  </Includes.Resources>
+</Includes>

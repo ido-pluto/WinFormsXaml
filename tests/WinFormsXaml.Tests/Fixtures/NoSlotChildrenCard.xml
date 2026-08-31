@@ -1,0 +1,3 @@
+<Component Class="WinFormsXaml.Tests.NoSlotChildrenCodeBehind">
+  <Label Name="NoSlotLabel" Text="No slot" />
+</Component>

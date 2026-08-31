@@ -1,0 +1,4 @@
+<Panel>
+  <Includes Source="ConditionalTheme"
+            Condition="{Preset MissingTheme == Dark}" />
+</Panel>

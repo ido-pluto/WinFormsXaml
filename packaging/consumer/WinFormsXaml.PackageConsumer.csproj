@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net20</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>WinFormsXaml.PackageConsumer</AssemblyName>
+    <RootNamespace>WinFormsXaml.PackageConsumer</RootNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <LangVersion>2</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AppConfig>App.config</AppConfig>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WinFormsXaml"
+                      Version="$(WinFormsXamlPackageVersion)" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net20"
+                      Version="1.0.3"
+                      PrivateAssets="all" />
+    <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <Target Name="ValidateLocalPackageVersion" BeforeTargets="PrepareForBuild">
+    <Error Condition=" '$(WinFormsXamlPackageVersion)' == '' "
+           Text="WinFormsXamlPackageVersion must identify the local package under validation." />
+  </Target>
+  <Target Name="ValidatePackageSchemaContent" BeforeTargets="PrepareForBuild">
+    <ItemGroup>
+      <_WinFormsXamlSchemaContent Include="@(None)"
+          Condition=" '%(None.NuGetPackageId)' == 'WinFormsXaml' and '%(None.Filename)%(None.Extension)' == 'WinFormsXaml.xsd' " />
+    </ItemGroup>
+    <PropertyGroup>
+      <_WinFormsXamlSchemaContentCount>@(_WinFormsXamlSchemaContent->Count())</_WinFormsXamlSchemaContentCount>
+    </PropertyGroup>
+    <Error Condition=" '$(_WinFormsXamlSchemaContentCount)' != '1' "
+           Text="WinFormsXaml must expose exactly one WinFormsXaml.xsd None item to a PackageReference consumer." />
+    <Error Condition=" '%(_WinFormsXamlSchemaContent.NuGetItemType)' != 'None' "
+           Text="The PackageReference WinFormsXaml.xsd item must retain NuGetItemType=None." />
+    <Error Condition=" '%(_WinFormsXamlSchemaContent.Link)' != 'WinFormsXaml.xsd' "
+           Text="The PackageReference WinFormsXaml.xsd item must be flattened to the project root." />
+    <Error Condition=" '%(_WinFormsXamlSchemaContent.CopyToOutputDirectory)' != '' and '%(_WinFormsXamlSchemaContent.CopyToOutputDirectory)' != 'Never' "
+           Text="The PackageReference WinFormsXaml.xsd item must not copy to build output." />
+    <Error Condition=" '%(_WinFormsXamlSchemaContent.CopyToPublishDirectory)' != '' and '%(_WinFormsXamlSchemaContent.CopyToPublishDirectory)' != 'Never' "
+           Text="The PackageReference WinFormsXaml.xsd item must not copy to publish output." />
+  </Target>
+</Project>

@@ -1,0 +1,2870 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified"
+           version="1.0">
+  <xs:annotation>
+    <xs:documentation>
+      WinFormsXaml editor schema. This XSD 1.0 schema supplies completion and
+      hover documentation for the canonical built-in markup vocabulary,
+      including Form/Class documents, native controls, layout, binding
+      expressions, presets, reusable Includes documents, item templates and
+      tuning, registered Component documents, declared properties, and
+      Children projection. The runtime can
+      also discover arbitrary public WinForms types, registered controls, CLR
+      properties, and events. Lax element and attribute wildcards intentionally
+      keep that reflection-based extension model available. At runtime, XML
+      parser failures retain their parser line and position. Semantic property
+      failures report markup source, element path, property name, and the
+      original failing attribute position when retained, otherwise the deepest
+      opening element position. Item-template clones and registered-component
+      TemplateXml round trips preserve those source coordinates.
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- Value shapes -->
+
+  <xs:simpleType name="DynamicExpression">
+    <xs:annotation>
+      <xs:documentation>
+        A Binding, Function, or Preset expression. Binding forms include
+        {Binding}, {Binding Title}, {Binding Path=Title}, {Binding !IsReady},
+        and safe computed one-way forms such as {Binding Count &gt; 10},
+        {Binding Count &lt;= 2}, and {Binding IsReady &amp;&amp; !IsBusy}. Computed
+        operands are paths, parentheses, quoted strings, finite numbers,
+        booleans, or null. Operators are !, &lt;/&lt;=/&gt;/&gt;=,
+        ==/===/!=/!==, &amp;&amp;, and ||, in that precedence order from highest to
+        lowest after primary expressions. In XML attributes, escape &lt; as
+        &amp;lt; and &amp;&amp; as &amp;amp;&amp;amp;. Comparisons do not coerce strings or
+        unrelated types; numeric CLR types compare numerically. Every operand
+        path is resolved and observed eagerly. Computed bindings do not allow
+        Mode=TwoWay, methods, indexers, arithmetic, assignment, or ternary
+        expressions; limits are 1024 expression characters, 256 tokens, and
+        32 nested parenthesis levels. Ordinary bindings support the optional
+        Mode=OneWay|TwoWay,
+        Source=Current|CodeBehind, and TwoWay-only
+        UpdateSourceTrigger=PropertyChanged|LostFocus|Explicit settings.
+        TwoWay requires one complete,
+        non-negated Binding ending in a writable PropertyBinding value or a
+        writable notification-based CLR property. Function forms include
+        {Function Name}, {Function Name(.)}, and explicit arguments such as
+        DataContext, this, CodeBehind, null, booleans, numbers, quoted strings,
+        and notifying paths. A bare Function first seeks zero arguments and then
+        the current data context. Presets use {Preset SetName.Key}. These forms
+        may also be interpolated into text. StaticResource is separate: it is
+        accepted only for named style selection and Style.BasedOn.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\s*\{(Binding(\s+\S[^{}]*)?|Function\s+\S[^{}]*|Preset\s+\S[^{}]*)\}\s*" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="InactiveScrollBarStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="" />
+      <xs:enumeration value="false" />
+      <xs:enumeration value="False" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OptionalScrollBarStyleValue">
+    <xs:union memberTypes="InactiveScrollBarStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="StaticTypeName">
+    <xs:annotation>
+      <xs:documentation>
+        A non-empty CLR type name used as static identity metadata. Markup
+        expressions are not valid in this position.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[^{}]+" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="BooleanLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="true" />
+      <xs:enumeration value="false" />
+      <xs:enumeration value="True" />
+      <xs:enumeration value="False" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="BooleanValue">
+    <xs:annotation>
+      <xs:documentation>
+        A boolean literal or a runtime expression string. This includes
+        TwoWay bindings such as {Binding Accepted, Mode=TwoWay} on
+        CheckBox.Checked and CheckBox.IsChecked, plus one-way comparison and
+        logical bindings such as {Binding Count &gt; 10} and
+        {Binding Count &lt; 20 &amp;&amp; IsReady}.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="BooleanLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="IntegerValue">
+    <xs:union memberTypes="xs:int DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FloatingNumberLiteral">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[+-]?(([0-9]+([.][0-9]*)?)|([.][0-9]+))([eE][+-]?[0-9]+)?" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NumberValue">
+    <xs:union memberTypes="xs:decimal DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FloatingNumberValue">
+    <xs:union memberTypes="FloatingNumberLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="NonNegativeIntegerLiteral">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="0" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NonNegativeIntegerValue">
+    <xs:union memberTypes="NonNegativeIntegerLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="AtLeastMinusOneIntegerLiteral">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="-1" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AtLeastMinusOneIntegerValue">
+    <xs:union memberTypes="AtLeastMinusOneIntegerLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="PositiveIntegerLiteral">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PositiveIntegerValue">
+    <xs:union memberTypes="PositiveIntegerLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ColorValue">
+    <xs:annotation>
+      <xs:documentation>
+        A System.Drawing.Color literal, including hex, named, Color.Red,
+        Color.Transparent, SystemColors.Control, and other public Color or
+        SystemColors values; or a Binding, Function, or Preset expression whose
+        result converts to Color.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="xs:string DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="PaddingValue">
+    <xs:annotation>
+      <xs:documentation>
+        A System.Windows.Forms.Padding literal with one, two, or four integer
+        components, or a Binding, Function, or Preset expression whose result
+        converts to Padding. Four components are physical left, top, right,
+        and bottom values and are not mirrored in right-to-left layouts.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="xs:string DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Auto" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PixelUnitLiteral">
+    <xs:annotation>
+      <xs:documentation>A fractional numeric token carrying a px or pt suffix. PixelValue also accepts unsuffixed decimals.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[+-]?(([0-9]+([.][0-9]*)?)|([.][0-9]+))([eE][+-]?[0-9]+)?(px|pt)" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PixelValue">
+    <xs:union memberTypes="FloatingNumberLiteral PixelUnitLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoPixelValue">
+    <xs:union memberTypes="AutoLiteral FloatingNumberLiteral PixelUnitLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="NonNegativeDecimalLiteral">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NonNegativeNumberValue">
+    <xs:union memberTypes="NonNegativeDecimalLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="NonNegativePixelUnitLiteral">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[+]?(([0-9]+([.][0-9]*)?)|([.][0-9]+))([eE][+-]?[0-9]+)?(px|pt)" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="StarGridLengthLiteral">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="([+]?(([0-9]+([.][0-9]*)?)|([.][0-9]+))([eE][+-]?[0-9]+)?(px|pt)?)?[*]" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="GridLengthValue">
+    <xs:annotation>
+      <xs:documentation>
+        A non-negative fixed size, Auto, or proportional star size such as *,
+        2*, or 0.5*. Grid definitions are static layout metadata and do not bind.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="AutoLiteral NonNegativeDecimalLiteral NonNegativePixelUnitLiteral StarGridLengthLiteral" />
+  </xs:simpleType>
+
+  <xs:simpleType name="StaticResourceExpression">
+    <xs:annotation>
+      <xs:documentation>
+        A named style reference in the canonical form
+        {StaticResource StyleKey}. It is valid for style selection and BasedOn,
+        not as a general property-value expression.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\{StaticResource .+\}" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OrientationLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Horizontal" />
+      <xs:enumeration value="Vertical" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="OrientationValue">
+    <xs:union memberTypes="OrientationLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ItemsControlVirtualizationModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Controls" />
+      <xs:enumeration value="Lightweight" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ItemsControlVirtualizationModeValue">
+    <xs:union memberTypes="ItemsControlVirtualizationModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ItemRecyclingModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Disabled" />
+      <xs:enumeration value="Explicit" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ItemRecyclingModeValue">
+    <xs:union memberTypes="ItemRecyclingModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="VisibilityLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Visible" />
+      <xs:enumeration value="Hidden" />
+      <xs:enumeration value="Collapsed" />
+      <xs:enumeration value="true" />
+      <xs:enumeration value="false" />
+      <xs:enumeration value="True" />
+      <xs:enumeration value="False" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VisibilityValue">
+    <xs:union memberTypes="VisibilityLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="HorizontalAlignmentLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Left" />
+      <xs:enumeration value="Center" />
+      <xs:enumeration value="Right" />
+      <xs:enumeration value="Stretch" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="HorizontalAlignmentValue">
+    <xs:union memberTypes="HorizontalAlignmentLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="VerticalAlignmentLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Top" />
+      <xs:enumeration value="Center" />
+      <xs:enumeration value="Bottom" />
+      <xs:enumeration value="Stretch" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VerticalAlignmentValue">
+    <xs:union memberTypes="VerticalAlignmentLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DockLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Left" />
+      <xs:enumeration value="Top" />
+      <xs:enumeration value="Right" />
+      <xs:enumeration value="Bottom" />
+      <xs:enumeration value="Fill" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DockValue">
+    <xs:union memberTypes="DockLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FlowDirectionLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LeftToRight" />
+      <xs:enumeration value="RightToLeft" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FlowDirectionValue">
+    <xs:union memberTypes="FlowDirectionLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="RightToLeftLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="No" />
+      <xs:enumeration value="Yes" />
+      <xs:enumeration value="Inherit" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="RightToLeftValue">
+    <xs:union memberTypes="RightToLeftLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ProgressBarStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Blocks" />
+      <xs:enumeration value="Continuous" />
+      <xs:enumeration value="Marquee" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ProgressBarStyleValue">
+    <xs:union memberTypes="ProgressBarStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="TextWrappingLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NoWrap" />
+      <xs:enumeration value="Wrap" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TextWrappingValue">
+    <xs:union memberTypes="TextWrappingLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="StretchLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Fill" />
+      <xs:enumeration value="Uniform" />
+      <xs:enumeration value="UniformToFill" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="StretchValue">
+    <xs:union memberTypes="StretchLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ScrollBarVisibilityLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Disabled" />
+      <xs:enumeration value="Auto" />
+      <xs:enumeration value="Hidden" />
+      <xs:enumeration value="Visible" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ScrollBarVisibilityValue">
+    <xs:union memberTypes="ScrollBarVisibilityLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="TableLayoutSizeTypeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Absolute" />
+      <xs:enumeration value="AutoSize" />
+      <xs:enumeration value="Percent" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TableLayoutSizeTypeValue">
+    <xs:union memberTypes="TableLayoutSizeTypeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="StyleValue">
+    <xs:annotation>
+      <xs:documentation>
+        A named resource-style key, {StaticResource StyleKey}, or a one-way
+        expression selecting a key. Controls with a native Style property use a
+        dedicated schema type and select markup styles through ResourceStyle.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="StaticResourceExpression DynamicExpression xs:string" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FlexDirectionLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Row" />
+      <xs:enumeration value="Column" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FlexDirectionValue">
+    <xs:union memberTypes="FlexDirectionLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FlexJustifyLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Start" />
+      <xs:enumeration value="Center" />
+      <xs:enumeration value="End" />
+      <xs:enumeration value="SpaceBetween" />
+      <xs:enumeration value="SpaceAround" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FlexJustifyValue">
+    <xs:union memberTypes="FlexJustifyLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FlexAlignLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Start" />
+      <xs:enumeration value="Center" />
+      <xs:enumeration value="End" />
+      <xs:enumeration value="Stretch" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FlexAlignValue">
+    <xs:union memberTypes="FlexAlignLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FormStartPositionLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Manual" />
+      <xs:enumeration value="CenterScreen" />
+      <xs:enumeration value="WindowsDefaultLocation" />
+      <xs:enumeration value="WindowsDefaultBounds" />
+      <xs:enumeration value="CenterParent" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FormStartPositionValue">
+    <xs:union memberTypes="FormStartPositionLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FormBorderStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="FixedSingle" />
+      <xs:enumeration value="Fixed3D" />
+      <xs:enumeration value="FixedDialog" />
+      <xs:enumeration value="Sizable" />
+      <xs:enumeration value="FixedToolWindow" />
+      <xs:enumeration value="SizableToolWindow" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FormBorderStyleValue">
+    <xs:union memberTypes="FormBorderStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FlatStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Flat" />
+      <xs:enumeration value="Popup" />
+      <xs:enumeration value="Standard" />
+      <xs:enumeration value="System" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FlatStyleValue">
+    <xs:union memberTypes="FlatStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="PictureSizeModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Normal" />
+      <xs:enumeration value="StretchImage" />
+      <xs:enumeration value="AutoSize" />
+      <xs:enumeration value="CenterImage" />
+      <xs:enumeration value="Zoom" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PictureSizeModeValue">
+    <xs:union memberTypes="PictureSizeModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ComboBoxStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Simple" />
+      <xs:enumeration value="DropDown" />
+      <xs:enumeration value="DropDownList" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ComboBoxStyleValue">
+    <xs:union memberTypes="ComboBoxStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="SourceKindLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="File" />
+      <xs:enumeration value="EmbeddedResource" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="IncludeSourceKindLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Registered" />
+      <xs:enumeration value="EmbeddedResource" />
+      <xs:enumeration value="File" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="StaticIncludeReference">
+    <xs:annotation>
+      <xs:documentation>
+        Non-empty static include composition metadata. Binding, Function, and
+        Preset expressions are not evaluated while the document tree is being
+        composed.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[^{}]*[^\s{}][^{}]*" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FormWindowStateLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Normal" />
+      <xs:enumeration value="Minimized" />
+      <xs:enumeration value="Maximized" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FormWindowStateValue">
+    <xs:union memberTypes="FormWindowStateLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="BorderStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="FixedSingle" />
+      <xs:enumeration value="Fixed3D" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="BorderStyleValue">
+    <xs:union memberTypes="BorderStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="Border3DStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Adjust" />
+      <xs:enumeration value="Bump" />
+      <xs:enumeration value="Etched" />
+      <xs:enumeration value="Flat" />
+      <xs:enumeration value="Raised" />
+      <xs:enumeration value="RaisedInner" />
+      <xs:enumeration value="RaisedOuter" />
+      <xs:enumeration value="Sunken" />
+      <xs:enumeration value="SunkenInner" />
+      <xs:enumeration value="SunkenOuter" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Border3DStyleValue">
+    <xs:union memberTypes="Border3DStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="StatusBarPanelBorderStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Raised" />
+      <xs:enumeration value="Sunken" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="StatusBarPanelBorderStyleValue">
+    <xs:union memberTypes="StatusBarPanelBorderStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DialogResultLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="OK" />
+      <xs:enumeration value="Cancel" />
+      <xs:enumeration value="Abort" />
+      <xs:enumeration value="Retry" />
+      <xs:enumeration value="Ignore" />
+      <xs:enumeration value="Yes" />
+      <xs:enumeration value="No" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DialogResultValue">
+    <xs:union memberTypes="DialogResultLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ContentAlignmentLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TopLeft" />
+      <xs:enumeration value="TopCenter" />
+      <xs:enumeration value="TopRight" />
+      <xs:enumeration value="MiddleLeft" />
+      <xs:enumeration value="MiddleCenter" />
+      <xs:enumeration value="MiddleRight" />
+      <xs:enumeration value="BottomLeft" />
+      <xs:enumeration value="BottomCenter" />
+      <xs:enumeration value="BottomRight" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ContentAlignmentValue">
+    <xs:union memberTypes="ContentAlignmentLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="LinkBehaviorLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SystemDefault" />
+      <xs:enumeration value="AlwaysUnderline" />
+      <xs:enumeration value="HoverUnderline" />
+      <xs:enumeration value="NeverUnderline" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LinkBehaviorValue">
+    <xs:union memberTypes="LinkBehaviorLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="HorizontalTextAlignmentLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Left" />
+      <xs:enumeration value="Center" />
+      <xs:enumeration value="Right" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="HorizontalTextAlignmentValue">
+    <xs:union memberTypes="HorizontalTextAlignmentLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolBarTextAlignmentLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Underneath" />
+      <xs:enumeration value="Right" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolBarTextAlignmentValue">
+    <xs:union memberTypes="ToolBarTextAlignmentLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="CheckStateLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Unchecked" />
+      <xs:enumeration value="Checked" />
+      <xs:enumeration value="Indeterminate" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CheckStateValue">
+    <xs:union memberTypes="CheckStateLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="AppearanceLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Normal" />
+      <xs:enumeration value="Button" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AppearanceValue">
+    <xs:union memberTypes="AppearanceLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ScrollBarsLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Horizontal" />
+      <xs:enumeration value="Vertical" />
+      <xs:enumeration value="Both" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ScrollBarsValue">
+    <xs:union memberTypes="ScrollBarsLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="RichTextBoxScrollBarsLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Horizontal" />
+      <xs:enumeration value="Vertical" />
+      <xs:enumeration value="Both" />
+      <xs:enumeration value="ForcedHorizontal" />
+      <xs:enumeration value="ForcedVertical" />
+      <xs:enumeration value="ForcedBoth" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="RichTextBoxScrollBarsValue">
+    <xs:union memberTypes="RichTextBoxScrollBarsLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="CharacterCasingLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Normal" />
+      <xs:enumeration value="Upper" />
+      <xs:enumeration value="Lower" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="CharacterCasingValue">
+    <xs:union memberTypes="CharacterCasingLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="TickStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="TopLeft" />
+      <xs:enumeration value="BottomRight" />
+      <xs:enumeration value="Both" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TickStyleValue">
+    <xs:union memberTypes="TickStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="SelectionModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="One" />
+      <xs:enumeration value="MultiSimple" />
+      <xs:enumeration value="MultiExtended" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SelectionModeValue">
+    <xs:union memberTypes="SelectionModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewSelectionModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CellSelect" />
+      <xs:enumeration value="FullRowSelect" />
+      <xs:enumeration value="FullColumnSelect" />
+      <xs:enumeration value="RowHeaderSelect" />
+      <xs:enumeration value="ColumnHeaderSelect" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewSelectionModeValue">
+    <xs:union memberTypes="DataGridViewSelectionModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ListViewLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LargeIcon" />
+      <xs:enumeration value="Details" />
+      <xs:enumeration value="SmallIcon" />
+      <xs:enumeration value="List" />
+      <xs:enumeration value="Tile" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ListViewValue">
+    <xs:union memberTypes="ListViewLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ImageLayoutLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Tile" />
+      <xs:enumeration value="Center" />
+      <xs:enumeration value="Stretch" />
+      <xs:enumeration value="Zoom" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ImageLayoutValue">
+    <xs:union memberTypes="ImageLayoutLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DateTimePickerFormatLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Long" />
+      <xs:enumeration value="Short" />
+      <xs:enumeration value="Time" />
+      <xs:enumeration value="Custom" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DateTimePickerFormatValue">
+    <xs:union memberTypes="DateTimePickerFormatLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FormSizeGripStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Auto" />
+      <xs:enumeration value="Show" />
+      <xs:enumeration value="Hide" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FormSizeGripStyleValue">
+    <xs:union memberTypes="FormSizeGripStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripItemDisplayStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Text" />
+      <xs:enumeration value="Image" />
+      <xs:enumeration value="ImageAndText" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewComboBoxDisplayStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ComboBox" />
+      <xs:enumeration value="DropDownButton" />
+      <xs:enumeration value="Nothing" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripItemDisplayStyleValue">
+    <xs:union memberTypes="ToolStripItemDisplayStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewComboBoxDisplayStyleValue">
+    <xs:union memberTypes="DataGridViewComboBoxDisplayStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripItemOverflowLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Never" />
+      <xs:enumeration value="Always" />
+      <xs:enumeration value="AsNeeded" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripItemOverflowValue">
+    <xs:union memberTypes="ToolStripItemOverflowLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewColumnSortModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NotSortable" />
+      <xs:enumeration value="Automatic" />
+      <xs:enumeration value="Programmatic" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewColumnSortModeValue">
+    <xs:union memberTypes="DataGridViewColumnSortModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewTriStateLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NotSet" />
+      <xs:enumeration value="True" />
+      <xs:enumeration value="False" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewTriStateValue">
+    <xs:union memberTypes="DataGridViewTriStateLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewAutoSizeColumnModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NotSet" />
+      <xs:enumeration value="None" />
+      <xs:enumeration value="ColumnHeader" />
+      <xs:enumeration value="AllCellsExceptHeader" />
+      <xs:enumeration value="AllCells" />
+      <xs:enumeration value="DisplayedCellsExceptHeader" />
+      <xs:enumeration value="DisplayedCells" />
+      <xs:enumeration value="Fill" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewAutoSizeColumnModeValue">
+    <xs:union memberTypes="DataGridViewAutoSizeColumnModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ButtonAutoSizeModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="GrowOnly" />
+      <xs:enumeration value="GrowAndShrink" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ButtonAutoSizeModeValue">
+    <xs:union memberTypes="ButtonAutoSizeModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewImageCellLayoutLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NotSet" />
+      <xs:enumeration value="Normal" />
+      <xs:enumeration value="Stretch" />
+      <xs:enumeration value="Zoom" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewImageCellLayoutValue">
+    <xs:union memberTypes="DataGridViewImageCellLayoutLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoScaleModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Font" />
+      <xs:enumeration value="Dpi" />
+      <xs:enumeration value="Inherit" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoScaleModeValue">
+    <xs:union memberTypes="AutoScaleModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoValidateLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Disable" />
+      <xs:enumeration value="EnablePreventFocusChange" />
+      <xs:enumeration value="EnableAllowFocusChange" />
+      <xs:enumeration value="Inherit" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoValidateValue">
+    <xs:union memberTypes="AutoValidateLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoCompleteModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Suggest" />
+      <xs:enumeration value="Append" />
+      <xs:enumeration value="SuggestAppend" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoCompleteModeValue">
+    <xs:union memberTypes="AutoCompleteModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoCompleteSourceLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="AllSystemSources" />
+      <xs:enumeration value="AllUrl" />
+      <xs:enumeration value="FileSystem" />
+      <xs:enumeration value="HistoryList" />
+      <xs:enumeration value="RecentlyUsedList" />
+      <xs:enumeration value="CustomSource" />
+      <xs:enumeration value="ListItems" />
+      <xs:enumeration value="FileSystemDirectories" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AutoCompleteSourceValue">
+    <xs:union memberTypes="AutoCompleteSourceLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ColumnHeaderStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Nonclickable" />
+      <xs:enumeration value="Clickable" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ColumnHeaderStyleValue">
+    <xs:union memberTypes="ColumnHeaderStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="SortOrderLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Ascending" />
+      <xs:enumeration value="Descending" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SortOrderValue">
+    <xs:union memberTypes="SortOrderLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ItemActivationLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Standard" />
+      <xs:enumeration value="OneClick" />
+      <xs:enumeration value="TwoClick" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ItemActivationValue">
+    <xs:union memberTypes="ItemActivationLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="FixedPanelLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Panel1" />
+      <xs:enumeration value="Panel2" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FixedPanelValue">
+    <xs:union memberTypes="FixedPanelLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="TableLayoutPanelGrowStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="FixedSize" />
+      <xs:enumeration value="AddRows" />
+      <xs:enumeration value="AddColumns" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TableLayoutPanelGrowStyleValue">
+    <xs:union memberTypes="TableLayoutPanelGrowStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripGripStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Hidden" />
+      <xs:enumeration value="Visible" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripGripStyleValue">
+    <xs:union memberTypes="ToolStripGripStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripLayoutStyleLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="StackWithOverflow" />
+      <xs:enumeration value="HorizontalStackWithOverflow" />
+      <xs:enumeration value="VerticalStackWithOverflow" />
+      <xs:enumeration value="Flow" />
+      <xs:enumeration value="Table" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripLayoutStyleValue">
+    <xs:union memberTypes="ToolStripLayoutStyleLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripRenderModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Custom" />
+      <xs:enumeration value="System" />
+      <xs:enumeration value="Professional" />
+      <xs:enumeration value="ManagerRenderMode" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ToolStripRenderModeValue">
+    <xs:union memberTypes="ToolStripRenderModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="TextImageRelationLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Overlay" />
+      <xs:enumeration value="ImageAboveText" />
+      <xs:enumeration value="TextAboveImage" />
+      <xs:enumeration value="ImageBeforeText" />
+      <xs:enumeration value="TextBeforeImage" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TextImageRelationValue">
+    <xs:union memberTypes="TextImageRelationLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="UpDownAlignmentLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Left" />
+      <xs:enumeration value="Right" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="UpDownAlignmentValue">
+    <xs:union memberTypes="UpDownAlignmentLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewEditModeLiteral">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EditOnEnter" />
+      <xs:enumeration value="EditOnKeystroke" />
+      <xs:enumeration value="EditOnKeystrokeOrF2" />
+      <xs:enumeration value="EditOnF2" />
+      <xs:enumeration value="EditProgrammatically" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DataGridViewEditModeValue">
+    <xs:union memberTypes="DataGridViewEditModeLiteral DynamicExpression" />
+  </xs:simpleType>
+
+  <!-- Common control surface -->
+
+  <xs:attributeGroup name="ControlAttributes">
+    <xs:attribute name="Name" type="xs:NCName">
+      <xs:annotation><xs:documentation>Static identity. Runtime lookup is case-insensitive; automatic XmlForm field wiring uses the exact C# field spelling. Name cannot be bound.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Type" type="StaticTypeName">
+      <xs:annotation><xs:documentation>CLR type name for Object or Control elements.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Condition" type="BooleanValue">
+      <xs:annotation><xs:documentation>One-way boolean-compatible literal or expression controlling structural inclusion. Safe Binding comparisons and logical expressions support paths, parentheses, strings, finite numbers, true/false/null, !, &lt;/&lt;=/&gt;/&gt;=, ==/===/!=/!==, &amp;&amp;, and ||. XML attributes must escape &lt; as &amp;lt; and &amp;&amp; as &amp;amp;&amp;amp;. All operand paths resolve eagerly; INotifyPropertyChanged members and PropertyBinding values update the complete expression reactively. Computed expressions reject Mode=TwoWay, methods, and arithmetic.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Text" type="xs:string" />
+    <xs:attribute name="Content" type="xs:string" />
+    <xs:attribute name="Header" type="xs:string" />
+    <xs:attribute name="HeaderText" type="xs:string" />
+    <xs:attribute name="Title" type="xs:string" />
+    <xs:attribute name="Tag" type="xs:string" />
+    <xs:attribute name="Enabled" type="BooleanValue" />
+    <xs:attribute name="IsEnabled" type="BooleanValue" />
+    <xs:attribute name="Visible" type="VisibilityValue" />
+    <xs:attribute name="Visibility" type="VisibilityValue" />
+    <xs:attribute name="AutoSize" type="BooleanValue" />
+    <xs:attribute name="Width" type="AutoPixelValue" />
+    <xs:attribute name="Height" type="AutoPixelValue" />
+    <xs:attribute name="MinWidth" type="PixelValue" />
+    <xs:attribute name="MinHeight" type="PixelValue" />
+    <xs:attribute name="MaxWidth" type="PixelValue" />
+    <xs:attribute name="MaxHeight" type="PixelValue" />
+    <xs:attribute name="Size" type="xs:string" />
+    <xs:attribute name="ClientSize" type="xs:string" />
+    <xs:attribute name="MinimumSize" type="xs:string" />
+    <xs:attribute name="MaximumSize" type="xs:string" />
+    <xs:attribute name="Location" type="xs:string" />
+    <xs:attribute name="Bounds" type="xs:string" />
+    <xs:attribute name="Left" type="IntegerValue" />
+    <xs:attribute name="Top" type="IntegerValue" />
+    <xs:attribute name="Margin" type="xs:string" />
+    <xs:attribute name="Padding" type="xs:string" />
+    <xs:attribute name="Anchor" type="xs:string" />
+    <xs:attribute name="Dock" type="DockValue" />
+    <xs:attribute name="HorizontalAlignment" type="HorizontalAlignmentValue" />
+    <xs:attribute name="VerticalAlignment" type="VerticalAlignmentValue" />
+    <xs:attribute name="BackColor" type="xs:string" />
+    <xs:attribute name="Background" type="xs:string" />
+    <xs:attribute name="ForeColor" type="xs:string" />
+    <xs:attribute name="Foreground" type="xs:string" />
+    <xs:attribute name="BackgroundImage" type="xs:string" />
+    <xs:attribute name="BackgroundImageLayout" type="ImageLayoutValue" />
+    <xs:attribute name="Font" type="xs:string" />
+    <xs:attribute name="FontFamily" type="xs:string" />
+    <xs:attribute name="FontSize" type="PixelValue" />
+    <xs:attribute name="FontWeight" type="xs:string" />
+    <xs:attribute name="FontStyle" type="xs:string" />
+    <xs:attribute name="TextDecorations" type="xs:string" />
+    <xs:attribute name="UseMnemonic" type="BooleanValue" />
+    <xs:attribute name="UseCompatibleTextRendering" type="BooleanValue" />
+    <xs:attribute name="FlowDirection" type="FlowDirectionValue" />
+    <xs:attribute name="RightToLeft" type="RightToLeftValue" />
+    <xs:attribute name="RightToLeftLayout" type="BooleanValue" />
+    <xs:attribute name="TabIndex" type="IntegerValue" />
+    <xs:attribute name="TabStop" type="BooleanValue" />
+    <xs:attribute name="IsTabStop" type="BooleanValue" />
+    <xs:attribute name="CausesValidation" type="BooleanValue" />
+    <xs:attribute name="AllowDrop" type="BooleanValue" />
+    <xs:attribute name="Cursor" type="xs:string" />
+    <xs:attribute name="UseWaitCursor" type="BooleanValue" />
+    <xs:attribute name="ToolTip" type="xs:string">
+      <xs:annotation><xs:documentation>Text displayed by the runtime-owned WinForms ToolTip when the pointer rests over this Control. Binding, function, and preset expressions are supported.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="AccessibleName" type="xs:string" />
+    <xs:attribute name="AccessibleDescription" type="xs:string" />
+    <xs:attribute name="AccessibleRole" type="xs:string" />
+    <xs:attribute name="ImeMode" type="xs:string" />
+
+    <!-- Native and WinFormsXaml control-specific properties. They remain in
+         one group so completion also works for registered subclasses. -->
+    <xs:attribute name="StartPosition" type="FormStartPositionValue" />
+    <xs:attribute name="FormBorderStyle" type="FormBorderStyleValue" />
+    <xs:attribute name="AutoScaleMode" type="AutoScaleModeValue">
+      <xs:annotation><xs:documentation>Native ContainerControl scaling mode. WinFormsXaml initializes Forms to None before markup properties are applied.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="AutoValidate" type="AutoValidateValue" />
+    <xs:attribute name="Icon" type="xs:string">
+      <xs:annotation><xs:documentation>Explicit Form icon literal or binding. It has precedence over UseApplicationIcon regardless of XML attribute order.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="UseApplicationIcon" type="BooleanValue">
+      <xs:annotation><xs:documentation>Low-precedence Form fallback directive. True uses the executable icon only when no local Icon literal, Icon binding, or Icon style owns the property; false leaves the native Form default behavior in place.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="AcceptButton" type="xs:string" />
+    <xs:attribute name="CancelButton" type="xs:string" />
+    <xs:attribute name="ControlBox" type="BooleanValue" />
+    <xs:attribute name="HelpButton" type="BooleanValue" />
+    <xs:attribute name="MaximizeBox" type="BooleanValue" />
+    <xs:attribute name="MinimizeBox" type="BooleanValue" />
+    <xs:attribute name="ShowInTaskbar" type="BooleanValue" />
+    <xs:attribute name="TopMost" type="BooleanValue" />
+    <xs:attribute name="WindowState" type="FormWindowStateValue" />
+    <xs:attribute name="KeyPreview" type="BooleanValue" />
+    <xs:attribute name="IsMdiContainer" type="BooleanValue" />
+    <xs:attribute name="ActiveControl" type="xs:string" />
+    <xs:attribute name="ShowIcon" type="BooleanValue" />
+    <xs:attribute name="SizeGripStyle" type="FormSizeGripStyleValue" />
+    <xs:attribute name="Opacity" type="FloatingNumberValue" />
+    <xs:attribute name="AutoScroll" type="BooleanValue">
+      <xs:annotation><xs:documentation>Enables native scrolling for a scrollable control. ItemsControl enables it by default; set false there to opt out. Other controls retain their native WinForms default. Boolean literals and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="AutoScrollMargin" type="xs:string" />
+    <xs:attribute name="AutoScrollMinSize" type="xs:string" />
+    <xs:attribute name="FlatStyle" type="FlatStyleValue" />
+    <xs:attribute name="UseVisualStyleBackColor" type="BooleanValue" />
+    <xs:attribute name="DialogResult" type="DialogResultValue" />
+    <xs:attribute name="Image" type="xs:string" />
+    <xs:attribute name="ImageIndex" type="IntegerValue" />
+    <xs:attribute name="ImageKey" type="xs:string" />
+    <xs:attribute name="SelectedImageIndex" type="IntegerValue" />
+    <xs:attribute name="SelectedImageKey" type="xs:string" />
+    <xs:attribute name="Source" type="xs:string">
+      <xs:annotation><xs:documentation>PictureBox image input or WebBrowser URI. Binding Source=Current and Source=CodeBehind remain options inside a Binding expression.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ImageAlign" type="ContentAlignmentValue" />
+    <xs:attribute name="TextImageRelation" type="TextImageRelationValue" />
+    <xs:attribute name="ImageTransparentColor" type="xs:string" />
+    <xs:attribute name="AutoEllipsis" type="BooleanValue" />
+    <xs:attribute name="LinkArea" type="xs:string" />
+    <xs:attribute name="LinkBehavior" type="LinkBehaviorValue" />
+    <xs:attribute name="ActiveLinkColor" type="xs:string" />
+    <xs:attribute name="DisabledLinkColor" type="xs:string" />
+    <xs:attribute name="LinkColor" type="xs:string" />
+    <xs:attribute name="VisitedLinkColor" type="xs:string" />
+    <xs:attribute name="Checked" type="BooleanValue" />
+    <xs:attribute name="IsChecked" type="BooleanValue" />
+    <xs:attribute name="CheckState" type="CheckStateValue" />
+    <xs:attribute name="ThreeState" type="BooleanValue" />
+    <xs:attribute name="AutoCheck" type="BooleanValue" />
+    <xs:attribute name="Appearance" type="AppearanceValue" />
+    <xs:attribute name="ReadOnly" type="BooleanValue" />
+    <xs:attribute name="IsReadOnly" type="BooleanValue" />
+    <xs:attribute name="Multiline" type="BooleanValue" />
+    <xs:attribute name="MaxLength" type="IntegerValue" />
+    <xs:attribute name="UseSystemPasswordChar" type="BooleanValue" />
+    <xs:attribute name="PasswordChar" type="xs:string" />
+    <xs:attribute name="Mask" type="xs:string" />
+    <xs:attribute name="PromptChar" type="xs:string" />
+    <xs:attribute name="AcceptsReturn" type="BooleanValue" />
+    <xs:attribute name="AcceptsTab" type="BooleanValue" />
+    <xs:attribute name="WordWrap" type="BooleanValue" />
+    <xs:attribute name="Modified" type="BooleanValue" />
+    <xs:attribute name="ShortcutsEnabled" type="BooleanValue" />
+    <xs:attribute name="DetectUrls" type="BooleanValue" />
+    <xs:attribute name="SelectionStart" type="IntegerValue" />
+    <xs:attribute name="SelectionLength" type="IntegerValue" />
+    <xs:attribute name="SelectedText" type="xs:string" />
+    <xs:attribute name="SelectionEnd" type="xs:string" />
+    <xs:attribute name="SelectionRange" type="xs:string" />
+    <xs:attribute name="SelectionAlignment" type="xs:string" />
+    <xs:attribute name="SelectionBullet" type="BooleanValue" />
+    <xs:attribute name="SelectionCharOffset" type="IntegerValue" />
+    <xs:attribute name="SelectionColor" type="xs:string" />
+    <xs:attribute name="SelectionFont" type="xs:string" />
+    <xs:attribute name="SelectionHangingIndent" type="IntegerValue" />
+    <xs:attribute name="SelectionIndent" type="IntegerValue" />
+    <xs:attribute name="SelectionProtected" type="BooleanValue" />
+    <xs:attribute name="SelectionRightIndent" type="IntegerValue" />
+    <xs:attribute name="SelectionTabs" type="xs:string" />
+    <xs:attribute name="TextWrapping" type="TextWrappingValue" />
+    <xs:attribute name="CharacterCasing" type="CharacterCasingValue" />
+    <xs:attribute name="AutoCompleteMode" type="AutoCompleteModeValue" />
+    <xs:attribute name="AutoCompleteSource" type="AutoCompleteSourceValue" />
+    <xs:attribute name="DropDownStyle" type="ComboBoxStyleValue" />
+    <xs:attribute name="DropDownWidth" type="IntegerValue" />
+    <xs:attribute name="MaxDropDownItems" type="IntegerValue" />
+    <xs:attribute name="SelectedIndex" type="IntegerValue" />
+    <xs:attribute name="SelectedItem" type="xs:string" />
+    <xs:attribute name="SelectedValue" type="xs:string" />
+    <xs:attribute name="DroppedDown" type="BooleanValue" />
+    <xs:attribute name="DisplayMember" type="xs:string" />
+    <xs:attribute name="ValueMember" type="xs:string" />
+    <xs:attribute name="DataSource" type="xs:string" />
+    <xs:attribute name="IntegralHeight" type="BooleanValue" />
+    <xs:attribute name="ItemHeight" type="IntegerValue" />
+    <xs:attribute name="HorizontalScrollbar" type="BooleanValue" />
+    <xs:attribute name="MultiColumn" type="BooleanValue" />
+    <xs:attribute name="ScrollAlwaysVisible" type="BooleanValue" />
+    <xs:attribute name="FormattingEnabled" type="BooleanValue" />
+    <xs:attribute name="Sorted" type="BooleanValue" />
+    <xs:attribute name="CheckOnClick" type="BooleanValue" />
+    <xs:attribute name="View" type="ListViewValue" />
+    <xs:attribute name="Activation" type="ItemActivationValue" />
+    <xs:attribute name="HeaderStyle" type="ColumnHeaderStyleValue" />
+    <xs:attribute name="Sorting" type="SortOrderValue" />
+    <xs:attribute name="AllowColumnReorder" type="BooleanValue" />
+    <xs:attribute name="LabelEdit" type="BooleanValue" />
+    <xs:attribute name="LabelWrap" type="BooleanValue" />
+    <xs:attribute name="OwnerDraw" type="BooleanValue" />
+    <xs:attribute name="VirtualMode" type="BooleanValue" />
+    <xs:attribute name="VirtualListSize" type="IntegerValue" />
+    <xs:attribute name="CheckBoxes" type="BooleanValue" />
+    <xs:attribute name="FullRowSelect" type="BooleanValue" />
+    <xs:attribute name="GridLines" type="BooleanValue" />
+    <xs:attribute name="HideSelection" type="BooleanValue" />
+    <xs:attribute name="MultiSelect" type="BooleanValue" />
+    <xs:attribute name="ShowLines" type="BooleanValue" />
+    <xs:attribute name="ShowPlusMinus" type="BooleanValue" />
+    <xs:attribute name="ShowRootLines" type="BooleanValue" />
+    <xs:attribute name="HotTracking" type="BooleanValue" />
+    <xs:attribute name="HoverSelection" type="BooleanValue" />
+    <xs:attribute name="Scrollable" type="BooleanValue" />
+    <xs:attribute name="ShowGroups" type="BooleanValue" />
+    <xs:attribute name="ShowNodeToolTips" type="BooleanValue" />
+    <xs:attribute name="Indent" type="IntegerValue" />
+    <xs:attribute name="TileSize" type="xs:string" />
+    <xs:attribute name="PathSeparator" type="xs:string" />
+    <xs:attribute name="SelectedNode" type="xs:string" />
+    <xs:attribute name="SelectedTab" type="xs:string" />
+    <xs:attribute name="Step" type="IntegerValue" />
+    <xs:attribute name="SmallChange" type="IntegerValue" />
+    <xs:attribute name="LargeChange" type="IntegerValue" />
+    <xs:attribute name="TickFrequency" type="IntegerValue" />
+    <xs:attribute name="TickStyle" type="TickStyleValue" />
+    <xs:attribute name="Increment" type="NumberValue" />
+    <xs:attribute name="DecimalPlaces" type="IntegerValue" />
+    <xs:attribute name="Hexadecimal" type="BooleanValue" />
+    <xs:attribute name="ThousandsSeparator" type="BooleanValue" />
+    <xs:attribute name="UpDownAlign" type="UpDownAlignmentValue" />
+    <xs:attribute name="CustomFormat" type="xs:string" />
+    <xs:attribute name="ShowUpDown" type="BooleanValue" />
+    <xs:attribute name="ShowCheckBox" type="BooleanValue" />
+    <xs:attribute name="MinDate" type="xs:string" />
+    <xs:attribute name="MaxDate" type="xs:string" />
+    <xs:attribute name="AllowUserToAddRows" type="BooleanValue" />
+    <xs:attribute name="AllowUserToDeleteRows" type="BooleanValue" />
+    <xs:attribute name="AutoGenerateColumns" type="BooleanValue" />
+    <xs:attribute name="ColumnHeadersVisible" type="BooleanValue" />
+    <xs:attribute name="RowHeadersVisible" type="BooleanValue" />
+    <xs:attribute name="EditMode" type="DataGridViewEditModeValue" />
+    <xs:attribute name="CurrentCell" type="xs:string" />
+    <xs:attribute name="DataPropertyName" type="xs:string" />
+    <xs:attribute name="MappingName" type="xs:string" />
+    <xs:attribute name="NullText" type="xs:string" />
+    <xs:attribute name="FillWeight" type="FloatingNumberValue" />
+    <xs:attribute name="DisplayIndex" type="IntegerValue" />
+    <xs:attribute name="SortMode" type="DataGridViewColumnSortModeValue" />
+    <xs:attribute name="Resizable" type="DataGridViewTriStateValue" />
+    <xs:attribute name="ImageLayout" type="DataGridViewImageCellLayoutValue" />
+    <xs:attribute name="UseColumnTextForButtonValue" type="BooleanValue" />
+    <xs:attribute name="UseColumnTextForLinkValue" type="BooleanValue" />
+    <xs:attribute name="TrackVisitedState" type="BooleanValue" />
+    <xs:attribute name="LinkVisited" type="BooleanValue" />
+    <xs:attribute name="Overflow" type="ToolStripItemOverflowValue" />
+    <xs:attribute name="AutoToolTip" type="BooleanValue" />
+    <xs:attribute name="ToolTipText" type="xs:string" />
+    <xs:attribute name="Spring" type="BooleanValue" />
+    <xs:attribute name="GripStyle" type="ToolStripGripStyleValue" />
+    <xs:attribute name="LayoutStyle" type="ToolStripLayoutStyleValue" />
+    <xs:attribute name="RenderMode" type="ToolStripRenderModeValue" />
+    <xs:attribute name="CanOverflow" type="BooleanValue" />
+    <xs:attribute name="ShowItemToolTips" type="BooleanValue" />
+    <xs:attribute name="ShowPanels" type="BooleanValue" />
+    <xs:attribute name="SizingGrip" type="BooleanValue" />
+    <xs:attribute name="SelectedObject" type="xs:string" />
+    <xs:attribute name="SelectedObjects" type="xs:string" />
+    <xs:attribute name="SelectedGridItem" type="xs:string" />
+    <xs:attribute name="CountItemFormat" type="xs:string" />
+    <xs:attribute name="Url" type="xs:string" />
+    <xs:attribute name="AllowNavigation" type="BooleanValue" />
+    <xs:attribute name="ScriptErrorsSuppressed" type="BooleanValue" />
+    <xs:attribute name="DocumentText" type="xs:string" />
+    <xs:attribute name="DocumentStream" type="xs:string" />
+    <xs:attribute name="Zoom" type="FloatingNumberValue" />
+
+    <!-- Layout containers and attached properties. -->
+    <xs:attribute name="Orientation" type="OrientationValue">
+      <xs:annotation><xs:documentation>Main-axis orientation for StackPanel, ItemsControl, SplitContainer, and native controls that expose the property.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="FixedPanel" type="FixedPanelValue" />
+    <xs:attribute name="IsSplitterFixed" type="BooleanValue" />
+    <xs:attribute name="SplitterDistance" type="IntegerValue" />
+    <xs:attribute name="SplitPosition" type="IntegerValue" />
+    <xs:attribute name="SplitterWidth" type="IntegerValue" />
+    <xs:attribute name="Panel1Collapsed" type="BooleanValue" />
+    <xs:attribute name="Panel2Collapsed" type="BooleanValue" />
+    <xs:attribute name="AutoScrollPosition" type="xs:string" />
+    <xs:attribute name="Panel1MinSize" type="IntegerValue" />
+    <xs:attribute name="Panel2MinSize" type="IntegerValue" />
+    <xs:attribute name="ColumnCount" type="NonNegativeIntegerValue" />
+    <xs:attribute name="RowCount" type="NonNegativeIntegerValue" />
+    <xs:attribute name="GrowStyle" type="TableLayoutPanelGrowStyleValue" />
+    <xs:attribute name="WrapContents" type="BooleanValue" />
+    <xs:attribute name="LastChildFill" type="BooleanValue">
+      <xs:annotation><xs:documentation>When true, DockPanel gives its last visible child the remaining client area.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="BorderBrush" type="xs:string" />
+    <xs:attribute name="BorderThickness" type="xs:string" />
+    <xs:attribute name="VerticalScrollBarVisibility" type="ScrollBarVisibilityValue" />
+    <xs:attribute name="HorizontalScrollBarVisibility" type="ScrollBarVisibilityValue" />
+    <xs:attribute name="Grid.Row" type="IntegerValue" />
+    <xs:attribute name="Grid.Column" type="IntegerValue" />
+    <xs:attribute name="Grid.RowSpan" type="IntegerValue" />
+    <xs:attribute name="Grid.ColumnSpan" type="IntegerValue" />
+    <xs:attribute name="DockPanel.Dock" type="DockValue" />
+    <xs:attribute name="Canvas.Left" type="PixelValue" />
+    <xs:attribute name="Canvas.Top" type="PixelValue" />
+    <xs:attribute name="Canvas.Right" type="PixelValue" />
+    <xs:attribute name="Canvas.Bottom" type="PixelValue" />
+    <xs:attribute name="Panel.ZIndex" type="IntegerValue">
+      <xs:annotation><xs:documentation>Sibling stacking order for a Control. Higher integers are placed nearer the front and values are clamped to the available sibling range.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="FlexGrow" type="NonNegativeNumberValue">
+      <xs:annotation><xs:documentation>Non-negative relative weight for remaining main-axis space on a direct FlexPanel child or on the item-template root of a wrapped ItemsControl. This is attached layout metadata, not a native child property. A Binding, Function, or Preset expression may supply the value.</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <!-- ItemsControl source, diffing, progressive rendering, and virtualization. -->
+    <xs:attribute name="ItemsSource" type="DynamicExpression">
+      <xs:annotation><xs:documentation>An expression returning IEnumerable, usually {Binding Items}. ItemsBinding and IBindingList collection changes are observed, and a notifying owner can replace the complete source.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Spacing" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Non-negative ItemsControl spacing. On a one-dimensional host it separates adjacent realized entries; with Wrap=true it is both the item gap and wrapped-line gap. Integer literals and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ItemKeyPath" type="xs:string">
+      <xs:annotation><xs:documentation>Optional field/property path used as stable item identity for keyed reuse and moves. Id, ID, _id, or Key is auto-detected when omitted; index is the final fallback.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ItemVersionPath" type="xs:string">
+      <xs:annotation><xs:documentation>Optional cheap application version/token path. An equal explicit token can skip ordinary binding evaluation for that item.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ReuseItems" type="BooleanValue">
+      <xs:annotation><xs:documentation>Reuses unchanged keyed control trees instead of rebuilding them.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ReevaluateFunctionsOnRefresh" type="BooleanValue">
+      <xs:annotation><xs:documentation>Re-invokes Function expressions during explicit refresh so untracked external function state can participate in the diff.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ProgressiveRendering" type="BooleanValue">
+      <xs:annotation><xs:documentation>Builds changed and new entries in UI-message-loop batches while retaining the committed view until the refresh can publish.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ProgressiveBatchSize" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Maximum entry count attempted by one progressive tick. Runtime values below one normalize to one.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ProgressiveInterval" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Requested milliseconds between progressive UI ticks. Runtime values below one normalize to one.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ProgressiveTimeBudgetMs" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Maximum UI-thread work budget per progressive tick before yielding. Runtime values below one normalize to one.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="LiveScroll" type="BooleanValue">
+      <xs:annotation><xs:documentation>Updates content while the native scrollbar thumb is dragged even when the operating-system preference disables live contents.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="SmoothScroll" type="BooleanValue" default="true">
+      <xs:annotation><xs:documentation>ItemsControl only. True by default. Wheel and native line/page commands use one coalesced UI-thread animation; repeated input retargets the active transition instead of queuing another one. Set false for immediate destinations with a coalesced live-tree commit. Scrollbar thumb tracking and thumb release remain immediate and cancel any active transition. Boolean literals and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="SmoothScrollDuration" type="PositiveIntegerValue" default="120">
+      <xs:annotation><xs:documentation>ItemsControl only. Positive duration in milliseconds of one coalesced smooth-scroll transition; the default is 120. Positive integer literals and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="KeepScrollBarOnRight" type="BooleanValue">
+      <xs:annotation><xs:documentation>Keeps the scrolling host left-to-right so its vertical scrollbar remains on the right while repeated children can retain RTL content.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Virtualizing" type="BooleanValue" default="false">
+      <xs:annotation><xs:documentation>Explicitly enables viewport virtualization; the runtime default is false, so omitted markup always uses the ordinary renderer. Controls activates its direct synchronous backend once the logical count reaches VirtualizationThreshold and realizes only the visible range plus OverscanItems. Lightweight requires true and paints its visible fixed-size rows without native row controls.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="VirtualizationMode" type="ItemsControlVirtualizationModeValue">
+      <xs:annotation><xs:documentation>Selects the row backend after virtualization is explicitly enabled. Controls is the backend default and realizes complete WinForms control trees. Lightweight explicitly selects one owner-drawn surface with no native child tree per row. Its first strict profile requires Virtualizing=true, AutoScroll=true, Orientation=Vertical, a positive FixedItemSize, and an ItemTemplate composed only from one Border/StackPanel plus Label, two-way CheckBox, HyperlinkLabel, and Image leaves. Lightweight Image.Source must be one complete dynamic expression returning Image, Icon, or encoded byte[]; interpolation, URI, and animated image lifecycle require Controls. Ineligible lightweight markup is a location-aware load error and never silently falls back to Controls.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ItemRecycling" type="ItemRecyclingModeValue">
+      <xs:annotation><xs:documentation>Controls cross-item reuse of detached native row trees. Disabled is the safe default and keeps same-item identity/key cache reuse only. Explicit applies only to VirtualizationMode=Controls and considers a different item only when the ItemTemplate root implements IRecyclableItemControl and accepts the immutable ItemRecycleContext. The callback runs detached with item subscriptions inactive. A false result disposes the candidate and constructs a fresh tree; an exception fails the refresh visibly. Arbitrary roots are never inferred to be recyclable.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="VirtualizationThreshold" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Minimum item count at which an enabled Controls backend switches to direct viewport virtualization. Below this count, the ordinary renderer remains active and each root keeps its desired or explicit main-axis size; configured FixedItemSize and EstimatedItemSize do not replace that geometry. Runtime values below one normalize to one. Lightweight is explicitly selected and ignores this threshold.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="OverscanItems" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Defines a fixed maximum budget of two times this many extra logical items. Initial viewports split it before and after the visible range, and scrolling biases the same total budget ahead of travel. Controls retains its published bias for duplicate callbacks at the settled offset so an identical committed range remains unchanged. A stationary Lightweight viewport returns to the symmetric split. Controls realizes native trees, while Lightweight retains evaluated row-value snapshots without row controls. Runtime values below zero normalize to zero.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="EstimatedItemSize" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Initial main-axis estimate used by active direct Controls virtualization before a variable-size item is measured: height for a vertical list and width for a horizontal list. It does not size ordinary nonvirtual rows and is not the Lightweight row size. Runtime values below one normalize to one.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="VirtualizationCacheItems" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Maximum detached Controls-backend trees retained as bounded reuse hints. Reuse is same-item identity/key only by default; ItemRecycling=Explicit can opt participating roots into cross-item reset. Cached trees are never authoritative logical state; zero disables this cache. Lightweight has no detached tree cache and ignores this value.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="FixedItemSize" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Exact main-axis item content size used by active direct virtualization: height for a vertical list and width for a horizontal Controls list. In active direct Controls virtualization, zero keeps estimated variable-size measurement and a positive value selects the uniform path. Lightweight requires a positive vertical row height. The ordinary renderer, including a Controls profile below VirtualizationThreshold, intentionally ignores this setting for geometry and honors each root's desired size or explicit Height/Width.</xs:documentation></xs:annotation>
+    </xs:attribute>
+
+    <!-- ProgressBar. -->
+    <xs:attribute name="MarqueeAnimationSpeed" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>The requested marquee frame interval in milliseconds. When native marquee support is unavailable, the native Blocks grow/drain fallback uses the same logical value.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <!-- Common WinForms events. Values are code-behind method names. -->
+    <xs:attribute name="Click" type="xs:string" />
+    <xs:attribute name="DoubleClick" type="xs:string" />
+    <xs:attribute name="AutoSizeChanged" type="xs:string" />
+    <xs:attribute name="BackColorChanged" type="xs:string" />
+    <xs:attribute name="BackgroundImageChanged" type="xs:string" />
+    <xs:attribute name="BackgroundImageLayoutChanged" type="xs:string" />
+    <xs:attribute name="ClientSizeChanged" type="xs:string" />
+    <xs:attribute name="ControlAdded" type="xs:string" />
+    <xs:attribute name="ControlRemoved" type="xs:string" />
+    <xs:attribute name="CursorChanged" type="xs:string" />
+    <xs:attribute name="DockChanged" type="xs:string" />
+    <xs:attribute name="EnabledChanged" type="xs:string" />
+    <xs:attribute name="FontChanged" type="xs:string" />
+    <xs:attribute name="ForeColorChanged" type="xs:string" />
+    <xs:attribute name="GotFocus" type="xs:string" />
+    <xs:attribute name="HelpRequested" type="xs:string" />
+    <xs:attribute name="Layout" type="xs:string" />
+    <xs:attribute name="LocationChanged" type="xs:string" />
+    <xs:attribute name="LostFocus" type="xs:string" />
+    <xs:attribute name="MarginChanged" type="xs:string" />
+    <xs:attribute name="Move" type="xs:string" />
+    <xs:attribute name="PaddingChanged" type="xs:string" />
+    <xs:attribute name="ParentChanged" type="xs:string" />
+    <xs:attribute name="PreviewKeyDown" type="xs:string" />
+    <xs:attribute name="RightToLeftChanged" type="xs:string" />
+    <xs:attribute name="TabIndexChanged" type="xs:string" />
+    <xs:attribute name="TabStopChanged" type="xs:string" />
+    <xs:attribute name="Load" type="xs:string" />
+    <xs:attribute name="Shown" type="xs:string" />
+    <xs:attribute name="FormClosing" type="xs:string" />
+    <xs:attribute name="FormClosed" type="xs:string" />
+    <xs:attribute name="HelpButtonClicked" type="xs:string" />
+    <xs:attribute name="MdiChildActivate" type="xs:string" />
+    <xs:attribute name="TextChanged" type="xs:string" />
+    <xs:attribute name="ModifiedChanged" type="xs:string" />
+    <xs:attribute name="MultilineChanged" type="xs:string" />
+    <xs:attribute name="ReadOnlyChanged" type="xs:string" />
+    <xs:attribute name="CheckedChanged" type="xs:string" />
+    <xs:attribute name="CheckStateChanged" type="xs:string" />
+    <xs:attribute name="SelectedIndexChanged" type="xs:string" />
+    <xs:attribute name="ValueChanged" type="xs:string" />
+    <xs:attribute name="Enter" type="xs:string" />
+    <xs:attribute name="Leave" type="xs:string" />
+    <xs:attribute name="KeyDown" type="xs:string" />
+    <xs:attribute name="KeyPress" type="xs:string" />
+    <xs:attribute name="KeyUp" type="xs:string" />
+    <xs:attribute name="MouseClick" type="xs:string" />
+    <xs:attribute name="MouseDoubleClick" type="xs:string" />
+    <xs:attribute name="MouseDown" type="xs:string" />
+    <xs:attribute name="MouseEnter" type="xs:string" />
+    <xs:attribute name="MouseLeave" type="xs:string" />
+    <xs:attribute name="MouseMove" type="xs:string" />
+    <xs:attribute name="MouseUp" type="xs:string" />
+    <xs:attribute name="DragDrop" type="xs:string" />
+    <xs:attribute name="DragEnter" type="xs:string" />
+    <xs:attribute name="DragLeave" type="xs:string" />
+    <xs:attribute name="DragOver" type="xs:string" />
+    <xs:attribute name="Paint" type="xs:string" />
+    <xs:attribute name="Resize" type="xs:string" />
+    <xs:attribute name="SizeChanged" type="xs:string" />
+    <xs:attribute name="VisibleChanged" type="xs:string" />
+    <xs:attribute name="Activated" type="xs:string" />
+    <xs:attribute name="Deactivate" type="xs:string" />
+    <xs:attribute name="ResizeBegin" type="xs:string" />
+    <xs:attribute name="ResizeEnd" type="xs:string" />
+    <xs:attribute name="Validating" type="xs:string" />
+    <xs:attribute name="Validated" type="xs:string" />
+    <xs:attribute name="LinkClicked" type="xs:string" />
+    <xs:attribute name="ItemCheck" type="xs:string" />
+    <xs:attribute name="ItemChecked" type="xs:string" />
+    <xs:attribute name="ItemDrag" type="xs:string" />
+    <xs:attribute name="ItemSelectionChanged" type="xs:string" />
+    <xs:attribute name="SelectedValueChanged" type="xs:string" />
+    <xs:attribute name="SelectionChangeCommitted" type="xs:string" />
+    <xs:attribute name="DropDown" type="xs:string" />
+    <xs:attribute name="DropDownClosed" type="xs:string" />
+    <xs:attribute name="DropDownOpening" type="xs:string" />
+    <xs:attribute name="DropDownOpened" type="xs:string" />
+    <xs:attribute name="DropDownClosing" type="xs:string" />
+    <xs:attribute name="TextUpdate" type="xs:string" />
+    <xs:attribute name="DrawItem" type="xs:string" />
+    <xs:attribute name="MeasureItem" type="xs:string" />
+    <xs:attribute name="SelectionChanged" type="xs:string" />
+    <xs:attribute name="CellClick" type="xs:string" />
+    <xs:attribute name="CellDoubleClick" type="xs:string" />
+    <xs:attribute name="CellBeginEdit" type="xs:string" />
+    <xs:attribute name="CellEndEdit" type="xs:string" />
+    <xs:attribute name="CellValueChanged" type="xs:string" />
+    <xs:attribute name="CellValidating" type="xs:string" />
+    <xs:attribute name="CellValidated" type="xs:string" />
+    <xs:attribute name="CurrentCellChanged" type="xs:string" />
+    <xs:attribute name="DataBindingComplete" type="xs:string" />
+    <xs:attribute name="DataError" type="xs:string" />
+    <xs:attribute name="DefaultValuesNeeded" type="xs:string" />
+    <xs:attribute name="EditingControlShowing" type="xs:string" />
+    <xs:attribute name="BeforeSelect" type="xs:string" />
+    <xs:attribute name="AfterSelect" type="xs:string" />
+    <xs:attribute name="NodeMouseClick" type="xs:string" />
+    <xs:attribute name="Scroll" type="xs:string" />
+    <xs:attribute name="DateChanged" type="xs:string" />
+    <xs:attribute name="DateSelected" type="xs:string" />
+    <xs:attribute name="CloseUp" type="xs:string" />
+    <xs:attribute name="Opening" type="xs:string" />
+    <xs:attribute name="Opened" type="xs:string" />
+    <xs:attribute name="Closing" type="xs:string" />
+    <xs:attribute name="Closed" type="xs:string" />
+    <xs:attribute name="Navigating" type="xs:string" />
+    <xs:attribute name="Navigated" type="xs:string" />
+    <xs:attribute name="DocumentCompleted" type="xs:string" />
+    <xs:attribute name="ItemClicked" type="xs:string" />
+    <xs:attribute name="ItemAdded" type="xs:string" />
+    <xs:attribute name="ItemRemoved" type="xs:string" />
+    <xs:attribute name="ItemActivate" type="xs:string" />
+    <xs:attribute name="ColumnClick" type="xs:string" />
+    <xs:attribute name="CellContentClick" type="xs:string" />
+    <xs:attribute name="CellFormatting" type="xs:string" />
+    <xs:attribute name="RowEnter" type="xs:string" />
+    <xs:attribute name="RowLeave" type="xs:string" />
+    <xs:attribute name="RowValidating" type="xs:string" />
+    <xs:attribute name="RowValidated" type="xs:string" />
+    <xs:attribute name="RowsAdded" type="xs:string" />
+    <xs:attribute name="RowsRemoved" type="xs:string" />
+    <xs:attribute name="BeforeCheck" type="xs:string" />
+    <xs:attribute name="AfterCheck" type="xs:string" />
+    <xs:attribute name="BeforeExpand" type="xs:string" />
+    <xs:attribute name="AfterExpand" type="xs:string" />
+    <xs:attribute name="BeforeCollapse" type="xs:string" />
+    <xs:attribute name="AfterCollapse" type="xs:string" />
+    <xs:attribute name="RefreshCompleted" type="xs:string">
+      <xs:annotation><xs:documentation>ItemsControl event raised after a refresh commits.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="RefreshFailed" type="xs:string">
+      <xs:annotation><xs:documentation>ItemsControl event raised when a refresh fails and the previous view is retained.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="FlexLineAttributes">
+    <xs:attribute name="JustifyContent" type="FlexJustifyValue">
+      <xs:annotation><xs:documentation>FlexPanel or ItemsControl only. Places unused main-axis space within each line using Start, Center, End, SpaceBetween, or SpaceAround. On ItemsControl it applies to each wrapped row or column. A Binding, Function, or Preset expression may supply the value.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="AlignItems" type="FlexAlignValue">
+      <xs:annotation><xs:documentation>FlexPanel or ItemsControl only. Cross-axis Start, Center, End, or Stretch alignment within a line. Stretch affects a child whose cross-axis size is not explicit. A Binding, Function, or Preset expression may supply the value.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Wrap" type="BooleanValue">
+      <xs:annotation><xs:documentation>FlexPanel or ItemsControl only. Starts another line when the next visible child does not fit. On ItemsControl, Vertical fills rows and scrolls vertically while Horizontal fills columns and scrolls horizontally; Wrap=true cannot be combined with Virtualizing=true. Boolean literals and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="FlexPanelAttributes">
+    <xs:attributeGroup ref="FlexLineAttributes" />
+    <xs:attribute name="Direction" type="FlexDirectionValue">
+      <xs:annotation><xs:documentation>FlexPanel main axis: Row or Column. A Binding, Function, or Preset expression may supply the value.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Gap" type="NonNegativeIntegerValue">
+      <xs:annotation><xs:documentation>Non-negative FlexPanel pixel spacing between visible siblings and wrapped lines. Integer literals and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="StyleSelectionAttributes">
+    <xs:attribute name="Style" type="StyleValue">
+      <xs:annotation><xs:documentation>Selects a named resource style by key, StaticResource, or one-way dynamic expression.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ResourceStyle" type="xs:string">
+      <xs:annotation><xs:documentation>Selects a named resource style when Style is already a native CLR property.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="ProgressBarStyleSelectionAttributes">
+    <xs:attribute name="Style" type="ProgressBarStyleValue">
+      <xs:annotation><xs:documentation>The logical progress style: Blocks, Continuous, or Marquee. A dynamic expression must resolve to that native enum.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ResourceStyle" type="xs:string">
+      <xs:annotation><xs:documentation>Selects a named markup style without colliding with native ProgressBar.Style.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="PreferMarqueeFallback" type="BooleanValue">
+      <xs:annotation><xs:documentation>True forces the native Blocks grow/drain fallback. False uses it only when native marquee support is unavailable.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:complexType name="ControlType" mixed="true">
+    <xs:annotation>
+      <xs:documentation>
+        A native WinForms control, WinFormsXaml layout control, or registered
+        control. Known child elements are validated when possible; unknown
+        children and attributes remain available for runtime-registered types.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+    </xs:sequence>
+    <xs:attributeGroup ref="ControlAttributes" />
+    <xs:attributeGroup ref="StyleSelectionAttributes" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="ItemsControlType" mixed="true">
+    <xs:annotation>
+      <xs:documentation>
+        Repeats one ItemTemplate over ItemsSource. VerticalScrollStyle and
+        HorizontalScrollStyle are nullable ScrollBarStyle object properties.
+        Omit them, or supply an expression that resolves to null, to retain the
+        native scrollbar. A non-null style selects the framework-owned scrollbar
+        for the matching Orientation axis. The inactive-axis value is retained
+        but is not instantiated or displayed. Wrap enables retained non-virtual
+        row or column flow; Spacing is its item and line gap. Wrap cannot be
+        combined with Virtualizing.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attributeGroup ref="FlexLineAttributes" />
+        <xs:attribute name="VerticalScrollStyle" type="OptionalScrollBarStyleValue">
+          <xs:annotation><xs:documentation>Binding, Function, or Preset expression that resolves to a ScrollBarStyle for Orientation=Vertical. Omitted, empty, false, null, or unresolved retains the native scrollbar.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="HorizontalScrollStyle" type="OptionalScrollBarStyleValue">
+          <xs:annotation><xs:documentation>Binding, Function, or Preset expression that resolves to a ScrollBarStyle for Orientation=Horizontal. Omitted, empty, false, null, or unresolved retains the native scrollbar.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ScrollBarGap" type="NonNegativeIntegerValue" default="0">
+          <xs:annotation><xs:documentation>Empty pixels between item content and the active native or framework-owned scrollbar. The gap follows vertical RTL placement and also works for horizontal scrolling. Literal integers and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FlexPanelType" mixed="true">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attributeGroup ref="FlexPanelAttributes" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ProgressBarType" mixed="true">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+    </xs:sequence>
+    <xs:attributeGroup ref="ControlAttributes" />
+    <xs:attributeGroup ref="ProgressBarStyleSelectionAttributes" />
+    <xs:attribute name="Minimum" type="IntegerValue" />
+    <xs:attribute name="Maximum" type="IntegerValue" />
+    <xs:attribute name="Value" type="IntegerValue" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="ScrollBarStyleType">
+    <xs:annotation>
+      <xs:documentation>
+        Reusable colors and metrics for a framework-owned scrollbar. Every
+        attribute accepts a literal, Binding, Function, or Preset expression.
+        A shared instance notifies and repaints every attached scrollbar.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="TrackColor" type="ColorValue" />
+    <xs:attribute name="ThumbColor" type="ColorValue" />
+    <xs:attribute name="ThumbHoverColor" type="ColorValue" />
+    <xs:attribute name="ThumbPressedColor" type="ColorValue" />
+    <xs:attribute name="ArrowColor" type="ColorValue" />
+    <xs:attribute name="ArrowHoverColor" type="ColorValue" />
+    <xs:attribute name="BorderColor" type="ColorValue" />
+    <xs:attribute name="Thickness" type="PositiveIntegerValue" default="16" />
+    <xs:attribute name="MinimumThumbLength" type="PositiveIntegerValue" default="8" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="FrameworkScrollBarType" mixed="true">
+    <xs:annotation>
+      <xs:documentation>
+        Owner-painted WinFormsXaml scrollbar with no child windows. It supports
+        arrow and page repeat, thumb dragging, mouse wheel, keyboard input,
+        RTL horizontal mapping, Scroll and ValueChanged events, and a reusable
+        ScrollBarStyle. It follows native range semantics: the largest reachable
+        Value is Maximum - LargeChange + 1.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="true">
+      <xs:extension base="IntegerRangeControlType">
+        <xs:attribute name="TrackColor" type="ColorValue" />
+        <xs:attribute name="ThumbColor" type="ColorValue" />
+        <xs:attribute name="ThumbHoverColor" type="ColorValue" />
+        <xs:attribute name="ThumbPressedColor" type="ColorValue" />
+        <xs:attribute name="ArrowColor" type="ColorValue" />
+        <xs:attribute name="ArrowHoverColor" type="ColorValue" />
+        <xs:attribute name="BorderColor" type="ColorValue" />
+        <xs:attribute name="Thickness" type="PositiveIntegerValue" default="16" />
+        <xs:attribute name="MinimumThumbLength" type="PositiveIntegerValue" default="8" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="TabViewType">
+    <xs:annotation>
+      <xs:documentation>
+        Adaptive tab host. It uses native TabControl chrome while appearance
+        values remain at their defaults, and switches to framework-painted
+        headers when an effective custom appearance is applied. Add TabViewItem
+        children directly or through TabView.TabItems. SelectedIndex and SelectedItem
+        are bindable, including Mode=TwoWay; SelectedIndex is applied after
+        all declared children have been attached. FlowDirection and the
+        inherited RightToLeft value control header order: logical item zero is
+        leftmost in LTR and rightmost in RTL. Collection order is never
+        reversed. Padding and thickness values stay physical left, top, right,
+        bottom values in both directions.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="SelectedItemChanged" type="xs:string" />
+        <xs:attribute name="ForceNativeTabs" type="BooleanValue" default="false">
+          <xs:annotation><xs:documentation>Forces native operating-system tab chrome even while custom appearance values are stored. The value can be bound and changing it preserves pages, selection, handles, and focus.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="TabBackground" type="ColorValue" />
+        <xs:attribute name="SelectedTabBackground" type="ColorValue" />
+        <xs:attribute name="TabForeground" type="ColorValue" />
+        <xs:attribute name="SelectedTabForeground" type="ColorValue" />
+        <xs:attribute name="TabBorderBrush" type="ColorValue" />
+        <xs:attribute name="TabBorderThickness" type="PaddingValue" />
+        <xs:attribute name="TabPadding" type="PaddingValue" />
+        <xs:attribute name="HeaderSpacing" type="NonNegativeIntegerValue" />
+        <xs:attribute name="ContentBackground" type="ColorValue" />
+        <xs:attribute name="ContentBorderBrush" type="ColorValue" />
+        <xs:attribute name="ContentBorderThickness" type="PaddingValue" />
+        <xs:attribute name="ContentPadding" type="PaddingValue" />
+        <xs:attribute name="TabCornerRadius" type="NonNegativeIntegerValue" default="0">
+          <xs:annotation><xs:documentation>Corner radius for framework-painted headers. Any nonzero effective value selects framework rendering unless ForceNativeTabs is true.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="SelectedTabCornerRadius" type="AtLeastMinusOneIntegerValue" default="-1">
+          <xs:annotation><xs:documentation>Selected-header radius. -1 inherits TabCornerRadius. Native tabs ignore the stored radius.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ForceNativeTabsChanged" type="xs:string" />
+        <xs:attribute name="TabBackgroundChanged" type="xs:string" />
+        <xs:attribute name="SelectedTabBackgroundChanged" type="xs:string" />
+        <xs:attribute name="TabForegroundChanged" type="xs:string" />
+        <xs:attribute name="SelectedTabForegroundChanged" type="xs:string" />
+        <xs:attribute name="TabBorderBrushChanged" type="xs:string" />
+        <xs:attribute name="TabBorderThicknessChanged" type="xs:string" />
+        <xs:attribute name="TabPaddingChanged" type="xs:string" />
+        <xs:attribute name="HeaderSpacingChanged" type="xs:string" />
+        <xs:attribute name="ContentBackgroundChanged" type="xs:string" />
+        <xs:attribute name="ContentBorderBrushChanged" type="xs:string" />
+        <xs:attribute name="ContentBorderThicknessChanged" type="xs:string" />
+        <xs:attribute name="ContentPaddingChanged" type="xs:string" />
+        <xs:attribute name="TabCornerRadiusChanged" type="xs:string" />
+        <xs:attribute name="SelectedTabCornerRadiusChanged" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="TabViewItemType">
+    <xs:annotation>
+      <xs:documentation>
+        A single TabView page. Header aliases Text and raises HeaderChanged.
+        Runtime validation allows zero or one visual content root; Resources
+        is metadata and does not consume that content slot.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="HeaderChanged" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AutoSizeControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="AutoSizeMode" type="ButtonAutoSizeModeValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="IntegerRangeControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="Minimum" type="IntegerValue" />
+        <xs:attribute name="Maximum" type="IntegerValue" />
+        <xs:attribute name="Value" type="IntegerValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="NumericRangeControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="Minimum" type="NumberValue" />
+        <xs:attribute name="Maximum" type="NumberValue" />
+        <xs:attribute name="Value" type="NumberValue" />
+        <xs:attribute name="BorderStyle" type="BorderStyleValue" />
+        <xs:attribute name="TextAlign" type="HorizontalTextAlignmentValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DateTimePickerControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="Format" type="DateTimePickerFormatValue" />
+        <xs:attribute name="Value" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FreeFormatControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="Format" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DataGridViewColumnControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="AutoSizeMode" type="DataGridViewAutoSizeColumnModeValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- Property names such as BorderStyle, TextAlign, ScrollBars,
+       SelectionMode, DisplayStyle, and Value are reused by unrelated native
+       types with different CLR enums/value types. Keep their literal
+       completion element-specific while every typed value still accepts a
+       DynamicExpression. Unknown registered controls continue through the lax
+       ControlType attribute boundary. -->
+
+  <xs:complexType name="BorderControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="BorderStyle" type="BorderStyleValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AutoSizeBorderControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="AutoSizeControlType">
+        <xs:attribute name="BorderStyle" type="BorderStyleValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="LabelControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="BorderControlType">
+        <xs:attribute name="TextAlign" type="ContentAlignmentValue" />
+        <xs:attribute name="TextAlignment" type="HorizontalTextAlignmentValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="HyperlinkLabelControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="LabelControlType">
+        <xs:attribute name="NavigateUri" type="xs:string">
+          <xs:annotation><xs:documentation>Destination opened when the link is activated. Literal, Binding, Function, and Preset values are supported.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="NavigateUriChanged" type="xs:string">
+          <xs:annotation><xs:documentation>Event raised after NavigateUri changes.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="RequestNavigate" type="xs:string">
+          <xs:annotation><xs:documentation>Event raised before the captured NavigateUri opens. Set HyperlinkNavigateEventArgs.Handled to true to supply application-specific navigation.</xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="TextBoxControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="BorderControlType">
+        <xs:attribute name="TextAlign" type="HorizontalTextAlignmentValue" />
+        <xs:attribute name="TextAlignment" type="HorizontalTextAlignmentValue" />
+        <xs:attribute name="ScrollBars" type="ScrollBarsValue" />
+        <xs:attribute name="Lines" type="DynamicExpression">
+          <xs:annotation><xs:documentation>Binding, Function, or Preset expression returning a String array. TextChanged supplies TwoWay updates.</xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="MaskedTextBoxControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="BorderControlType">
+        <xs:attribute name="TextAlign" type="HorizontalTextAlignmentValue" />
+        <xs:attribute name="Lines" type="DynamicExpression">
+          <xs:annotation><xs:documentation>Binding, Function, or Preset expression returning a String array. TextChanged supplies TwoWay updates.</xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="RichTextBoxControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="BorderControlType">
+        <xs:attribute name="ScrollBars" type="RichTextBoxScrollBarsValue" />
+        <xs:attribute name="Lines" type="DynamicExpression">
+          <xs:annotation><xs:documentation>Binding, Function, or Preset expression returning a String array. TextChanged supplies TwoWay updates.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Rtf" type="xs:string">
+          <xs:annotation><xs:documentation>Rich Text Format content. Literal and dynamic expression values are accepted; TextChanged supplies TwoWay updates for edits.</xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ButtonControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="AutoSizeControlType">
+        <xs:attribute name="TextAlign" type="ContentAlignmentValue" />
+        <xs:attribute name="TextAlignment" type="HorizontalTextAlignmentValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ListSelectionControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="BorderControlType">
+        <xs:attribute name="SelectionMode" type="SelectionModeValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DataGridViewControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="BorderControlType">
+        <xs:attribute name="SelectionMode" type="DataGridViewSelectionModeValue" />
+        <xs:attribute name="FirstDisplayedCell" type="DynamicExpression">
+          <xs:annotation><xs:documentation>Binding, Function, or Preset expression returning a DataGridViewCell. Scroll supplies TwoWay updates.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="FirstDisplayedScrollingColumnIndex" type="IntegerValue" />
+        <xs:attribute name="FirstDisplayedScrollingRowIndex" type="IntegerValue" />
+        <xs:attribute name="HorizontalScrollingOffset" type="IntegerValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="PictureBoxControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="BorderControlType">
+        <xs:attribute name="ImageLocation" type="xs:string">
+          <xs:annotation><xs:documentation>Native PictureBox image path or URI. Literal, Binding, Function, and Preset values are supported.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="InitialImage" type="xs:string">
+          <xs:annotation><xs:documentation>Native PictureBox placeholder image displayed while an asynchronous location load is in progress. Dynamic expressions may return System.Drawing.Image.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ErrorImage" type="xs:string">
+          <xs:annotation><xs:documentation>Native PictureBox fallback image displayed when a location load fails. Dynamic expressions may return System.Drawing.Image.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="WaitOnLoad" type="BooleanValue">
+          <xs:annotation><xs:documentation>Whether a native PictureBox waits synchronously when loading ImageLocation.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="SizeMode" type="PictureSizeModeValue" />
+        <xs:attribute name="Stretch" type="StretchValue">
+          <xs:annotation><xs:documentation>WPF-style scaling alias. Image provides exact centered UniformToFill cropping; native PictureBox maps that value to its closest Zoom mode and remains System.Windows.Forms.PictureBox.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="LoadCompleted" type="xs:string" />
+        <xs:attribute name="LoadProgressChanged" type="xs:string" />
+        <xs:attribute name="SizeModeChanged" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ImageControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="PictureBoxControlType">
+        <xs:attribute name="SourceChanged" type="xs:string">
+          <xs:annotation><xs:documentation>ImageControl event raised after Source changes.</xs:documentation></xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="StretchChanged" type="xs:string">
+          <xs:annotation><xs:documentation>ImageControl event raised after Stretch changes.</xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DomainUpDownControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="BorderStyle" type="BorderStyleValue" />
+        <xs:attribute name="TextAlign" type="HorizontalTextAlignmentValue" />
+        <xs:attribute name="SelectedItemChanged" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SplitContainerControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="BorderStyle" type="BorderStyleValue" />
+        <xs:attribute name="SplitterMoved" type="xs:string" />
+        <xs:attribute name="SplitterMoving" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="SplitterControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="BorderStyle" type="BorderStyleValue" />
+        <xs:attribute name="SplitterMoved" type="xs:string" />
+        <xs:attribute name="SplitterMoving" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="PropertyGridControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="SelectedObjectsChanged" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="FreeValueControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="Value" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DataGridViewComboBoxCellControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="FreeValueControlType">
+        <xs:attribute name="DisplayStyle" type="DataGridViewComboBoxDisplayStyleValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="DataGridViewComboBoxColumnControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="DataGridViewColumnControlType">
+        <xs:attribute name="DisplayStyle" type="DataGridViewComboBoxDisplayStyleValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ToolStripItemControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="TextAlign" type="ContentAlignmentValue" />
+        <xs:attribute name="DisplayStyle" type="ToolStripItemDisplayStyleValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ToolStripTextBoxControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ToolStripItemControlType">
+        <xs:attribute name="BorderStyle" type="BorderStyleValue" />
+        <xs:attribute name="TextBoxTextAlign" type="HorizontalTextAlignmentValue" />
+        <xs:attribute name="Lines" type="DynamicExpression">
+          <xs:annotation><xs:documentation>Binding, Function, or Preset expression returning a String array. TextChanged supplies TwoWay updates.</xs:documentation></xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ToolBarControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="BorderStyle" type="BorderStyleValue" />
+        <xs:attribute name="TextAlign" type="ToolBarTextAlignmentValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ToolStripStatusLabelControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ToolStripItemControlType">
+        <xs:attribute name="BorderStyle" type="Border3DStyleValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ToolStripProgressBarControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="IntegerRangeControlType">
+        <xs:attribute name="TextAlign" type="ContentAlignmentValue" />
+        <xs:attribute name="DisplayStyle" type="ToolStripItemDisplayStyleValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="StatusBarPanelControlType">
+    <xs:complexContent mixed="true">
+      <xs:extension base="ControlType">
+        <xs:attribute name="BorderStyle" type="StatusBarPanelBorderStyleValue" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="RowStyleType">
+    <xs:attribute name="SizeType" type="TableLayoutSizeTypeValue" />
+    <xs:attribute name="Height" type="FloatingNumberValue" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="ColumnStyleType">
+    <xs:attribute name="SizeType" type="TableLayoutSizeTypeValue" />
+    <xs:attribute name="Width" type="FloatingNumberValue" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="FormType" mixed="true">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+    </xs:sequence>
+    <xs:attributeGroup ref="ControlAttributes" />
+    <xs:attributeGroup ref="StyleSelectionAttributes" />
+    <xs:attribute name="AutoSizeMode" type="ButtonAutoSizeModeValue" />
+    <xs:attribute name="Class" type="StaticTypeName">
+      <xs:annotation><xs:documentation>Document-root metadata: the exact, static full CLR code-behind type. Direct embedded-runtime loading can create a concrete type with a public parameterless constructor; XmlForm verifies a supplied instance. Class cannot contain a markup expression.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <!-- WinFormsXaml layout and data elements -->
+
+  <xs:element name="Grid" type="ControlType">
+    <xs:annotation><xs:documentation>Row and column layout with fixed, Auto, and proportional * definitions.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="StackPanel" type="ControlType">
+    <xs:annotation><xs:documentation>Places children in vertical or horizontal order.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="DockPanel" type="ControlType">
+    <xs:annotation><xs:documentation>Docks children to edges and optionally fills the remainder with the final child.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="Canvas" type="ControlType">
+    <xs:annotation><xs:documentation>Coordinate layout using Canvas.Left, Canvas.Top, Canvas.Right, and Canvas.Bottom attached properties.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="FlexPanel" type="FlexPanelType">
+    <xs:annotation><xs:documentation>Row or column flex layout with literal or dynamic direction, line alignment, wrapping, gap, and child FlexGrow values.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="Border" type="ControlType">
+    <xs:annotation><xs:documentation>Single-child host with BorderBrush and BorderThickness.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="ScrollViewer" type="ControlType">
+    <xs:annotation><xs:documentation>Single-child scrollable host.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="Viewbox" type="ControlType">
+    <xs:annotation><xs:documentation>Single-child layout host.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="ItemsControl" type="ItemsControlType">
+    <xs:annotation><xs:documentation>Repeats one ItemTemplate over ItemsSource with incremental refresh, notifying item-property patches, optional non-virtual row/column wrapping, optional one-dimensional viewport virtualization, and an optional framework-owned scrollbar on the active Orientation axis. Wrap and Virtualizing cannot both be true.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="TabView" type="TabViewType">
+    <xs:annotation><xs:documentation>Framework-owned tabs with completely styleable headers and content chrome. Use direct TabViewItem children or one TabView.TabItems property element. Direction follows FlowDirection and inherited RightToLeft.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="TabViewItem" type="TabViewItemType">
+    <xs:annotation><xs:documentation>One TabView page. Header sets the header text. The item accepts at most one direct visual content child at runtime; local resources do not count as content.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="RowDefinitionsType">
+    <xs:sequence>
+      <xs:element ref="RowDefinition" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ColumnDefinitionsType">
+    <xs:sequence>
+      <xs:element ref="ColumnDefinition" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RowDefinitionType">
+    <xs:attribute name="Height" type="GridLengthValue" />
+  </xs:complexType>
+
+  <xs:complexType name="ColumnDefinitionType">
+    <xs:attribute name="Width" type="GridLengthValue" />
+  </xs:complexType>
+
+  <xs:element name="Grid.RowDefinitions" type="RowDefinitionsType" />
+  <xs:element name="Grid.ColumnDefinitions" type="ColumnDefinitionsType" />
+  <xs:element name="RowDefinition" type="RowDefinitionType" />
+  <xs:element name="ColumnDefinition" type="ColumnDefinitionType" />
+
+  <xs:complexType name="ItemTemplateType">
+    <xs:sequence>
+      <xs:any minOccurs="1" maxOccurs="1" processContents="lax" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="ItemsControl.ItemTemplate" type="ItemTemplateType">
+    <xs:annotation><xs:documentation>The sole item-template property element. Place it directly under ItemsControl and place its one visual root directly inside it.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="ItemType" mixed="true">
+    <xs:attribute name="Content" type="xs:string" />
+    <xs:attribute name="Text" type="xs:string" />
+    <xs:attribute name="Condition" type="BooleanLiteral">
+      <xs:annotation><xs:documentation>Static inclusion condition. Dynamic Condition is not supported on value-only Item elements.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:element name="Item" type="ItemType" />
+
+  <xs:complexType name="LinkType">
+    <xs:annotation>
+      <xs:documentation>
+        A native LinkLabel.Link entry for a LinkLabel.Links collection. Start
+        and Length select the linked text range; LinkData is delivered by the
+        native LinkClicked event.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Start" type="IntegerValue" />
+    <xs:attribute name="Length" type="IntegerValue" />
+    <xs:attribute name="LinkData" type="xs:string" />
+    <xs:attribute name="Enabled" type="BooleanValue" />
+    <xs:attribute name="Visited" type="BooleanValue" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:element name="Link" type="LinkType" />
+
+  <!-- Curated built-in property elements. The runtime also supports dotted
+       property elements for arbitrary reflected properties; ControlType's lax
+       child wildcard intentionally preserves that extension point. -->
+
+  <xs:complexType name="PropertyCollectionType">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SingleObjectPropertyType">
+    <xs:sequence>
+      <xs:any minOccurs="1" maxOccurs="1" processContents="lax" />
+    </xs:sequence>
+    <xs:attribute name="Condition" type="BooleanValue">
+      <xs:annotation><xs:documentation>One-way condition controlling whether the declared object replaces the property's underlying value.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="ScrollBarStylePropertyType">
+    <xs:sequence>
+      <xs:element ref="ScrollBarStyle" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Condition" type="BooleanValue" />
+  </xs:complexType>
+
+  <xs:complexType name="OptionalScrollBarStylePropertyType">
+    <xs:sequence>
+      <xs:element ref="ScrollBarStyle" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="Condition" type="BooleanValue">
+      <xs:annotation><xs:documentation>When false, the property remains null or returns to its underlying value so ItemsControl uses native scrollbar chrome.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="TabViewItemsType">
+    <xs:annotation>
+      <xs:documentation>
+        The read-only TabItems collection property. Declare zero or more
+        TabViewItem entries. This property-element form is equivalent to
+        placing those TabViewItem children directly under TabView.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="TabViewItem" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="Label.Text" type="xs:string">
+    <xs:annotation><xs:documentation>Leaf Text property element. Literal, interpolated, and retained complete expressions are supported.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="Button.TabIndex" type="IntegerValue" />
+
+  <xs:element name="ComboBox.Items" type="PropertyCollectionType" />
+  <xs:element name="ComboBox.AutoCompleteCustomSource" type="PropertyCollectionType" />
+  <xs:element name="ListBox.Items" type="PropertyCollectionType" />
+  <xs:element name="CheckedListBox.Items" type="PropertyCollectionType" />
+  <xs:element name="DomainUpDown.Items" type="PropertyCollectionType" />
+  <xs:element name="ListView.Columns" type="PropertyCollectionType" />
+  <xs:element name="LinkLabel.Links" type="PropertyCollectionType" />
+  <xs:element name="ListView.Groups" type="PropertyCollectionType" />
+  <xs:element name="ListView.Items" type="PropertyCollectionType" />
+  <xs:element name="ListViewItem.SubItems" type="PropertyCollectionType" />
+  <xs:element name="TreeView.Nodes" type="PropertyCollectionType" />
+  <xs:element name="TreeNode.Nodes" type="PropertyCollectionType" />
+  <xs:element name="DataGrid.TableStyles" type="PropertyCollectionType" />
+  <xs:element name="DataGridTableStyle.GridColumnStyles" type="PropertyCollectionType" />
+  <xs:element name="DataGridView.Columns" type="PropertyCollectionType" />
+  <xs:element name="DataGridView.Rows" type="PropertyCollectionType" />
+  <xs:element name="DataGridViewRow.Cells" type="PropertyCollectionType" />
+  <xs:element name="DataGridViewComboBoxColumn.Items" type="PropertyCollectionType" />
+  <xs:element name="DataGridViewComboBoxCell.Items" type="PropertyCollectionType" />
+  <xs:element name="TabControl.TabPages" type="PropertyCollectionType" />
+  <xs:element name="TabView.TabItems" type="TabViewItemsType" />
+  <xs:element name="ItemsControl.VerticalScrollStyle" type="OptionalScrollBarStylePropertyType">
+    <xs:annotation><xs:documentation>Declares zero or one ScrollBarStyle object for a vertical ItemsControl. An empty element retains the native scrollbar; a declared style is active only while Orientation is Vertical.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="ItemsControl.HorizontalScrollStyle" type="OptionalScrollBarStylePropertyType">
+    <xs:annotation><xs:documentation>Declares zero or one ScrollBarStyle object for a horizontal ItemsControl. An empty element retains the native scrollbar; a declared style is active only while Orientation is Horizontal.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="VerticalScrollBar.Style" type="ScrollBarStylePropertyType" />
+  <xs:element name="HorizontalScrollBar.Style" type="ScrollBarStylePropertyType" />
+  <xs:element name="ToolStrip.Items" type="PropertyCollectionType" />
+  <xs:element name="ToolStripDropDown.Items" type="PropertyCollectionType" />
+  <xs:element name="ToolStripDropDownMenu.Items" type="PropertyCollectionType" />
+  <xs:element name="MenuStrip.Items" type="PropertyCollectionType" />
+  <xs:element name="ContextMenuStrip.Items" type="PropertyCollectionType" />
+  <xs:element name="StatusStrip.Items" type="PropertyCollectionType" />
+  <xs:element name="BindingNavigator.Items" type="PropertyCollectionType" />
+  <xs:element name="ToolStripMenuItem.DropDownItems" type="PropertyCollectionType" />
+  <xs:element name="ToolStripDropDownButton.DropDownItems" type="PropertyCollectionType" />
+  <xs:element name="ToolStripSplitButton.DropDownItems" type="PropertyCollectionType" />
+  <xs:element name="ToolBar.Buttons" type="PropertyCollectionType" />
+  <xs:element name="StatusBar.Panels" type="PropertyCollectionType" />
+  <xs:element name="TableLayoutPanel.RowStyles" type="PropertyCollectionType" />
+  <xs:element name="TableLayoutPanel.ColumnStyles" type="PropertyCollectionType" />
+  <xs:element name="MainMenu.MenuItems" type="PropertyCollectionType" />
+  <xs:element name="ContextMenu.MenuItems" type="PropertyCollectionType" />
+  <xs:element name="MenuItem.MenuItems" type="PropertyCollectionType" />
+
+  <xs:element name="Form.Menu" type="SingleObjectPropertyType" />
+  <xs:element name="Control.ContextMenu" type="SingleObjectPropertyType" />
+  <xs:element name="Control.ContextMenuStrip" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridView.DefaultCellStyle" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridView.AlternatingRowsDefaultCellStyle" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridView.ColumnHeadersDefaultCellStyle" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridView.RowHeadersDefaultCellStyle" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridView.RowsDefaultCellStyle" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridViewColumn.DefaultCellStyle" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridViewRow.DefaultCellStyle" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridViewCell.Style" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridViewColumn.HeaderCell" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridViewRow.HeaderCell" type="SingleObjectPropertyType" />
+  <xs:element name="DataGridView.TopLeftHeaderCell" type="SingleObjectPropertyType" />
+
+  <!-- Resources and styles -->
+
+  <xs:complexType name="ResourcesType">
+    <xs:annotation>
+      <xs:documentation>
+        Local style and preset resources. Resource property elements may be
+        attached to any runtime element; common built-in owners are declared
+        below and application/registered owner names remain available through
+        the lax property-element wildcard.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="Style" />
+      <xs:element ref="Presets" />
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="StyleType">
+    <xs:annotation>
+      <xs:documentation>
+        A Key declares a named style; an unkeyed TargetType declares an implicit
+        style. BasedOn, when present, uses {StaticResource StyleKey}. Dynamic
+        setter expressions are one-way sources.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Setter" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="Key" type="xs:string" />
+    <xs:attribute name="TargetType" type="xs:string">
+      <xs:annotation><xs:documentation>A CLR type name or {x:Type TypeName}.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="BasedOn" type="StaticResourceExpression" />
+    <xs:attribute name="Condition" type="BooleanValue">
+      <xs:annotation><xs:documentation>One-way condition. Inactive styles contribute no setters; changes restore the previous style layer before active styles are reapplied.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="SetterType" mixed="true">
+    <xs:annotation><xs:documentation>Sets one property from Value or leaf text. Binding expressions in styles support OneWay only.</xs:documentation></xs:annotation>
+    <xs:attribute name="Property" type="xs:string" use="required" />
+    <xs:attribute name="Value" type="xs:string" />
+    <xs:attribute name="Condition" type="BooleanValue">
+      <xs:annotation><xs:documentation>Optional one-way condition controlling this setter only.</xs:documentation></xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="Style" type="StyleType" />
+  <xs:element name="Setter" type="SetterType" />
+  <xs:element name="Form.Resources" type="ResourcesType" />
+  <xs:element name="Panel.Resources" type="ResourcesType" />
+  <xs:element name="Grid.Resources" type="ResourcesType" />
+  <xs:element name="StackPanel.Resources" type="ResourcesType" />
+  <xs:element name="DockPanel.Resources" type="ResourcesType" />
+  <xs:element name="Canvas.Resources" type="ResourcesType" />
+  <xs:element name="FlexPanel.Resources" type="ResourcesType" />
+  <xs:element name="Border.Resources" type="ResourcesType" />
+  <xs:element name="ScrollViewer.Resources" type="ResourcesType" />
+  <xs:element name="Viewbox.Resources" type="ResourcesType" />
+  <xs:element name="ItemsControl.Resources" type="ResourcesType" />
+  <xs:element name="TabView.Resources" type="ResourcesType" />
+  <xs:element name="TabViewItem.Resources" type="ResourcesType" />
+  <xs:element name="Control.Resources" type="ResourcesType" />
+  <xs:element name="UserControl.Resources" type="ResourcesType" />
+  <xs:element name="FlowLayoutPanel.Resources" type="ResourcesType" />
+  <xs:element name="TableLayoutPanel.Resources" type="ResourcesType" />
+  <xs:element name="GroupBox.Resources" type="ResourcesType" />
+  <xs:element name="SplitContainer.Resources" type="ResourcesType" />
+  <xs:element name="TabControl.Resources" type="ResourcesType" />
+  <xs:element name="TabPage.Resources" type="ResourcesType" />
+  <xs:element name="ToolStripContainer.Resources" type="ResourcesType" />
+
+  <!-- Reusable include documents and directives -->
+
+  <xs:complexType name="IncludesType">
+    <xs:annotation>
+      <xs:documentation>
+        Root type for a standalone reusable Includes document and directive
+        type for inserting one with Source. Included content can contain local
+        Includes.Resources, Presets, nested Includes directives, registered
+        components, and ordinary visual elements. Source, SourceKind, and
+        Assembly are static composition metadata rather than runtime binding
+        targets. Condition may be a Boolean literal or one-way dynamic
+        expression and gates the included visual and style contributions.
+        SourceKind defaults to Registered. Assembly is an assembly
+        name and is used only with EmbeddedResource. When SourceKind is omitted,
+        an embedded:// or file:// Source prefix selects the corresponding kind;
+        an explicitly conflicting kind is rejected at runtime.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+    </xs:sequence>
+    <xs:attribute name="Source" type="StaticIncludeReference">
+      <xs:annotation>
+        <xs:documentation>
+          Static registered include identifier, manifest-resource name, or file
+          path. Markup expressions are not valid during composition.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="SourceKind" type="IncludeSourceKindLiteral" default="Registered" />
+    <xs:attribute name="Assembly" type="StaticIncludeReference">
+      <xs:annotation>
+        <xs:documentation>
+          Optional static assembly name for SourceKind=EmbeddedResource.
+          Markup expressions are not valid during composition.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Condition" type="BooleanValue">
+      <xs:annotation>
+        <xs:documentation>
+          Optional Boolean literal or one-way Binding, Function, or Preset
+          expression. Dynamic conditions retain composed controls and update
+          their visibility in place. Included resource styles participate only
+          while the condition is true. Nested include conditions are combined.
+          Preset declarations are always imported as catalogs.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="Includes" type="IncludesType">
+    <xs:annotation>
+      <xs:documentation>
+        Standalone reusable markup root when Source is omitted; include
+        directive when Source identifies registered, embedded, or file markup.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="IncludesResourcesType">
+    <xs:sequence>
+      <xs:element ref="Style" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="Includes.Resources" type="IncludesResourcesType">
+    <xs:annotation>
+      <xs:documentation>
+        Normal Style entries merged into the receiving owner's Resources
+        property. Declare Presets as direct children of Includes.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- Presets -->
+
+  <xs:complexType name="PresetsType">
+    <xs:annotation>
+      <xs:documentation>
+        Name is required when this element defines inline or standalone Preset
+        children. A source-only loader may omit Name because the referenced
+        Presets document supplies it.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="Preset" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Selected" type="xs:string" />
+    <xs:attribute name="Default" type="xs:string" />
+    <xs:attribute name="Source" type="xs:string">
+      <xs:annotation><xs:documentation>File path, resource name, or embedded:// resource URI.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="SourceKind" type="SourceKindLiteral" />
+    <xs:attribute name="Assembly" type="xs:string" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="PresetType">
+    <xs:sequence>
+      <xs:element ref="Set" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string" use="required" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="SetType">
+    <xs:annotation>
+      <xs:documentation>
+        A preset value. The required Value attribute may contain a literal,
+        binding, function, or preset expression. Preset bindings are OneWay.
+        Notifying binding paths refresh every active preset consumer. Set is
+        empty: inner text and child elements are not part of the grammar.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Key" type="xs:string" use="required" />
+    <xs:attribute name="Value" type="xs:string" use="required" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:element name="Presets" type="PresetsType" />
+  <xs:element name="Preset" type="PresetType" />
+  <xs:element name="Set" type="SetType" />
+
+  <!-- XML component documents -->
+
+  <xs:complexType name="ComponentType">
+    <xs:annotation>
+      <xs:documentation>
+        XML component root. Runtime grammar accepts an optional
+        Component.Properties block, component-level Presets and
+        Component.Resources metadata, and exactly one visual root. Class
+        optionally names a concrete public CLR code-behind type with a public
+        parameterless constructor; a new instance is created for every
+        component invocation. Omit Class for an XML-only component. XSD 1.0
+        uses a lax sequence here so the visual root can be an
+        application-registered control without a generated schema.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:any minOccurs="1" maxOccurs="unbounded" processContents="lax" />
+    </xs:sequence>
+    <xs:attribute name="Class" type="StaticTypeName">
+      <xs:annotation>
+        <xs:documentation>
+          Static full CLR name of the optional per-invocation component
+          code-behind. The type must be concrete, closed, public, and expose a
+          public parameterless constructor. Component use remains the short
+          registered resource name, for example ToastNotification.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="ComponentPropertiesType">
+    <xs:sequence>
+      <xs:element ref="Property" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ComponentPropertyType">
+    <xs:annotation>
+      <xs:documentation>
+        A typed component-local observable value. An inner Mode=TwoWay binding
+        can edit it; an invocation Mode=TwoWay binding can forward that edit to
+        a writable INotifyPropertyChanged property or PropertyBinding value.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Name" type="xs:NCName" use="required" />
+    <xs:attribute name="Type" type="StaticTypeName">
+      <xs:annotation><xs:documentation>A static CLR type name.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Default" type="xs:string">
+      <xs:annotation><xs:documentation>A static literal converted to Type. Binding, Function, and Preset expressions are not allowed in component defaults.</xs:documentation></xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Required" type="BooleanLiteral" />
+    <xs:anyAttribute processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="ChildrenSlotType">
+    <xs:annotation>
+      <xs:documentation>
+        The optional single caller-content slot in an embedded XML component
+        template. Keep this element empty. A component invocation may supply
+        zero or more visual Controls. Each child retains the caller Form/item
+        data context, namescope, event target, and binding ownership while the
+        surrounding template uses the component property/code-behind context.
+        Children cannot be the component visual root or appear inside a property
+        element or item template.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:complexType>
+
+  <xs:element name="Component" type="ComponentType">
+    <xs:annotation><xs:documentation>Root of an embedded, reusable XML component document.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="Component.Properties" type="ComponentPropertiesType" />
+  <xs:element name="Component.Resources" type="ResourcesType">
+    <xs:annotation>
+      <xs:documentation>
+        Styles and presets promoted into the component's single visual root.
+        Includes.Resources placed directly under Component normalizes to this
+        property during include composition.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="Property" type="ComponentPropertyType" />
+  <xs:element name="Children" type="ChildrenSlotType" />
+
+  <!-- Common native System.Windows.Forms elements -->
+
+  <xs:element name="Object" type="ControlType" />
+  <xs:element name="Control" type="ControlType" />
+  <xs:element name="ContainerControl" type="ControlType" />
+  <xs:element name="ScrollableControl" type="ControlType" />
+  <xs:element name="Form" type="FormType">
+    <xs:annotation><xs:documentation>A native System.Windows.Forms.Form, normally used as the visual document root. Class names its static full CLR code-behind type. Associate this no-namespace schema with xmlns:xsi and xsi:noNamespaceSchemaLocation on the Form.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="UserControl" type="AutoSizeBorderControlType" />
+  <xs:element name="MdiClient" type="ControlType" />
+  <xs:element name="Panel" type="AutoSizeBorderControlType" />
+  <xs:element name="FlowLayoutPanel" type="AutoSizeBorderControlType" />
+  <xs:element name="TableLayoutPanel" type="AutoSizeBorderControlType" />
+  <xs:element name="GroupBox" type="AutoSizeControlType" />
+  <xs:element name="SplitContainer" type="SplitContainerControlType" />
+  <xs:element name="Splitter" type="SplitterControlType" />
+  <xs:element name="Label" type="LabelControlType" />
+  <xs:element name="LinkLabel" type="LabelControlType" />
+  <xs:element name="HyperlinkLabel" type="HyperlinkLabelControlType">
+    <xs:annotation><xs:documentation>WinFormsXaml LinkLabel with a bindable NavigateUri destination and native LinkLabel appearance properties.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="TextBox" type="TextBoxControlType" />
+  <xs:element name="MaskedTextBox" type="MaskedTextBoxControlType" />
+  <xs:element name="RichTextBox" type="RichTextBoxControlType" />
+  <xs:element name="Button" type="ButtonControlType" />
+  <xs:element name="CheckBox" type="ButtonControlType" />
+  <xs:element name="RadioButton" type="ButtonControlType" />
+  <xs:element name="ComboBox" type="ControlType" />
+  <xs:element name="ListBox" type="ListSelectionControlType" />
+  <xs:element name="CheckedListBox" type="ListSelectionControlType" />
+  <xs:element name="ListView" type="BorderControlType" />
+  <xs:element name="ListViewItem" type="ControlType" />
+  <xs:element name="ListViewSubItem" type="ControlType" />
+  <xs:element name="ListViewGroup" type="ControlType" />
+  <xs:element name="ColumnHeader" type="ControlType" />
+  <xs:element name="TreeView" type="BorderControlType" />
+  <xs:element name="TreeNode" type="ControlType" />
+  <xs:element name="PictureBox" type="PictureBoxControlType">
+    <xs:annotation><xs:documentation>The exact native System.Windows.Forms.PictureBox with Image, ImageLocation, SizeMode, asynchronous loading properties, and native image-loading events.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="Image" type="ImageControlType">
+    <xs:annotation><xs:documentation>WPF-style ImageControl built on PictureBox. Source supports literals and dynamic values; Stretch accepts None, Fill, Uniform, or exact centered UniformToFill cropping without resized bitmap copies.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="TrackBar" type="IntegerRangeControlType" />
+  <xs:element name="NumericUpDown" type="NumericRangeControlType" />
+  <xs:element name="DomainUpDown" type="DomainUpDownControlType" />
+  <xs:element name="DateTimePicker" type="DateTimePickerControlType" />
+  <xs:element name="MonthCalendar" type="ControlType" />
+  <xs:element name="DataGrid" type="BorderControlType" />
+  <xs:element name="DataGridTextBox" type="TextBoxControlType" />
+  <xs:element name="DataGridTableStyle" type="ControlType" />
+  <xs:element name="DataGridTextBoxColumn" type="FreeFormatControlType" />
+  <xs:element name="DataGridBoolColumn" type="FreeFormatControlType" />
+  <xs:element name="DataGridView" type="DataGridViewControlType" />
+  <xs:element name="DataGridViewComboBoxEditingControl" type="ControlType" />
+  <xs:element name="DataGridViewTextBoxEditingControl" type="TextBoxControlType" />
+  <xs:element name="DataGridViewColumn" type="DataGridViewColumnControlType" />
+  <xs:element name="DataGridViewTextBoxColumn" type="DataGridViewColumnControlType" />
+  <xs:element name="DataGridViewCheckBoxColumn" type="DataGridViewColumnControlType" />
+  <xs:element name="DataGridViewComboBoxColumn" type="DataGridViewComboBoxColumnControlType" />
+  <xs:element name="DataGridViewImageColumn" type="DataGridViewColumnControlType" />
+  <xs:element name="DataGridViewButtonColumn" type="DataGridViewColumnControlType" />
+  <xs:element name="DataGridViewLinkColumn" type="DataGridViewColumnControlType" />
+  <xs:element name="DataGridViewRow" type="ControlType" />
+  <xs:element name="DataGridViewTextBoxCell" type="FreeValueControlType" />
+  <xs:element name="DataGridViewCheckBoxCell" type="FreeValueControlType" />
+  <xs:element name="DataGridViewComboBoxCell" type="DataGridViewComboBoxCellControlType" />
+  <xs:element name="DataGridViewImageCell" type="FreeValueControlType" />
+  <xs:element name="DataGridViewButtonCell" type="FreeValueControlType" />
+  <xs:element name="DataGridViewLinkCell" type="FreeValueControlType" />
+  <xs:element name="DataGridViewColumnHeaderCell" type="FreeValueControlType" />
+  <xs:element name="DataGridViewHeaderCell" type="FreeValueControlType" />
+  <xs:element name="DataGridViewRowHeaderCell" type="FreeValueControlType" />
+  <xs:element name="DataGridViewTopLeftHeaderCell" type="FreeValueControlType" />
+  <xs:element name="DataGridViewCellStyle" type="FreeFormatControlType" />
+  <xs:element name="PropertyGrid" type="PropertyGridControlType" />
+  <xs:element name="TabControl" type="ControlType" />
+  <xs:element name="TabPage" type="AutoSizeBorderControlType" />
+  <xs:element name="RowStyle" type="RowStyleType" />
+  <xs:element name="ColumnStyle" type="ColumnStyleType" />
+  <xs:element name="MainMenu" type="ControlType" />
+  <xs:element name="ContextMenu" type="ControlType" />
+  <xs:element name="MenuItem" type="ControlType" />
+  <xs:element name="MenuStrip" type="ControlType" />
+  <xs:element name="ContextMenuStrip" type="ControlType" />
+  <xs:element name="ToolStrip" type="ControlType" />
+  <xs:element name="ToolStripDropDown" type="ControlType" />
+  <xs:element name="ToolStripDropDownMenu" type="ControlType" />
+  <xs:element name="ToolBar" type="ToolBarControlType" />
+  <xs:element name="ToolBarButton" type="ControlType" />
+  <xs:element name="BindingNavigator" type="ControlType" />
+  <xs:element name="ToolStripContainer" type="ControlType" />
+  <xs:element name="ToolStripContentPanel" type="AutoSizeBorderControlType" />
+  <xs:element name="ToolStripPanel" type="ControlType" />
+  <xs:element name="StatusStrip" type="ControlType" />
+  <xs:element name="StatusBar" type="ControlType" />
+  <xs:element name="StatusBarPanel" type="StatusBarPanelControlType" />
+  <xs:element name="ToolStripButton" type="ToolStripItemControlType" />
+  <xs:element name="ToolStripLabel" type="ToolStripItemControlType" />
+  <xs:element name="ToolStripStatusLabel" type="ToolStripStatusLabelControlType" />
+  <xs:element name="ToolStripProgressBar" type="ToolStripProgressBarControlType" />
+  <xs:element name="ToolStripTextBox" type="ToolStripTextBoxControlType" />
+  <xs:element name="ToolStripComboBox" type="ToolStripItemControlType" />
+  <xs:element name="ToolStripDropDownButton" type="ToolStripItemControlType" />
+  <xs:element name="ToolStripSplitButton" type="ToolStripItemControlType" />
+  <xs:element name="ToolStripSeparator" type="ToolStripItemControlType" />
+  <xs:element name="ToolStripMenuItem" type="ToolStripItemControlType" />
+  <xs:element name="ProgressBar" type="ProgressBarType">
+    <xs:annotation><xs:documentation>The canonical WinForms progress element. Style="Marquee" and MarqueeAnimationSpeed select native marquee when the application renders with visual styles, or the native Blocks grow/drain fallback otherwise; PreferMarqueeFallback can force that fallback; ResourceStyle selects a named markup style.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="VerticalScrollBar" type="FrameworkScrollBarType">
+    <xs:annotation><xs:documentation>Framework-owned styleable vertical scrollbar. This is distinct from the native VScrollBar element.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="HorizontalScrollBar" type="FrameworkScrollBarType">
+    <xs:annotation><xs:documentation>Framework-owned styleable horizontal scrollbar with mirrored geometry and input in RightToLeft mode. This is distinct from the native HScrollBar element.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="ScrollBarStyle" type="ScrollBarStyleType">
+    <xs:annotation><xs:documentation>Mutable colors and metrics used by VerticalScrollBar, HorizontalScrollBar, and the active styled-scrollbar axis of ItemsControl.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="WebBrowser" type="ControlType" />
+  <xs:element name="PrintPreviewControl" type="ControlType" />
+  <xs:element name="PrintPreviewDialog" type="FormType" />
+  <xs:element name="HScrollBar" type="IntegerRangeControlType" />
+  <xs:element name="VScrollBar" type="IntegerRangeControlType" />
+</xs:schema>

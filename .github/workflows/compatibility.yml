@@ -1,0 +1,66 @@
+name: Compatibility and package gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'build/**'
+      - 'benchmarks/**'
+      - 'packaging/**'
+      - 'samples/**'
+      - 'schemas/**'
+      - 'tests/**'
+      - 'WinFormsXaml.sln'
+      - '.github/workflows/compatibility.yml'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'build/**'
+      - 'benchmarks/**'
+      - 'packaging/**'
+      - 'samples/**'
+      - 'schemas/**'
+      - 'tests/**'
+      - 'WinFormsXaml.sln'
+      - '.github/workflows/compatibility.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  net20:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+      - uses: nuget/setup-nuget@v3
+        with:
+          nuget-version: '6.12.1'
+      - uses: microsoft/setup-msbuild@v2
+      - name: Verify .NET 2.0 builds, tests, and Windows-native marquee
+        shell: pwsh
+        run: ./build/Verify.ps1 -SkipDocs -RequireNativeMarquee
+      - name: Construct the local NuGet package
+        shell: pwsh
+        env:
+          PACKAGE_VERSION: 0.1.0-ci.${{ github.run_number }}.${{ github.run_attempt }}
+        run: ./build/Pack.ps1 -PackageVersion $env:PACKAGE_VERSION
+      - name: Compile and run a clean consumer against the local package
+        shell: pwsh
+        env:
+          PACKAGE_VERSION: 0.1.0-ci.${{ github.run_number }}.${{ github.run_attempt }}
+        run: ./build/VerifyPackageConsumer.ps1 -PackageVersion $env:PACKAGE_VERSION
+      - uses: actions/upload-artifact@v7
+        with:
+          name: net20-validation-build
+          path: build/bin/Release/net20/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: local-nuget-package
+          path: artifacts/package/output/*.nupkg
+          if-no-files-found: error

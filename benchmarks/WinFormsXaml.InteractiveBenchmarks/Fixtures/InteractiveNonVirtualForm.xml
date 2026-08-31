@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Form Name="InteractiveNonVirtualForm"
+      Text="WinFormsXaml interactive non-virtual native Controls"
+      Width="780"
+      Height="560"
+      StartPosition="CenterParent"
+      ShowInTaskbar="false">
+  <Grid Dock="Fill" Padding="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Label Grid.Row="0"
+           Text="192 fully materialized nested native-control rows"
+           AutoSize="true"
+           Margin="0,0,0,8" />
+
+    <ItemsControl Name="BenchmarkRows"
+                  Grid.Row="1"
+                  ItemsSource="{Binding Rows}"
+                  AutoScroll="true"
+                  Virtualizing="false"
+                  ProgressiveRendering="false"
+                  Spacing="4">
+      <ItemsControl.ItemTemplate>
+        <Panel Size="730,84"
+               Padding="6"
+               BorderStyle="FixedSingle"
+               BackColor="#FAFAFA">
+          <PictureBox Location="8,14"
+                      Size="40,40"
+                      Image="{Binding Thumbnail}"
+                      SizeMode="CenterImage" />
+
+          <CheckBox Location="56,8"
+                    Size="78,58"
+                    Text="#{Binding Id}"
+                    Checked="{Binding Selected, Mode=TwoWay}"
+                    AutoCheck="false" />
+
+          <Panel Location="140,6" Size="570,64">
+            <Label Location="0,1"
+                   Size="390,22"
+                   Text="{Binding Title}" />
+            <Label Location="0,28"
+                   Size="390,28"
+                   Text="{Binding Detail}"
+                   AutoEllipsis="true" />
+            <Label Location="402,1"
+                   Size="160,22"
+                   Text="version {Binding Version}"
+                   TextAlign="MiddleRight" />
+            <ProgressBar Location="402,31"
+                         Size="160,20"
+                         Minimum="0"
+                         Maximum="100"
+                         Value="{Binding Progress}"
+                         Style="Blocks" />
+          </Panel>
+        </Panel>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </Grid>
+</Form>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Form Name="InteractiveRecyclingForm"
+      Text="WinFormsXaml interactive explicit Controls recycling"
+      Width="780"
+      Height="560"
+      StartPosition="CenterParent"
+      ShowInTaskbar="false">
+  <Grid Dock="Fill" Padding="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Label Grid.Row="0"
+           Text="10,000 native rows with an explicit cross-item reset contract"
+           AutoSize="true"
+           Margin="0,0,0,8" />
+
+    <ItemsControl Name="BenchmarkRows"
+                  Grid.Row="1"
+                  ItemsSource="{Binding Rows}"
+                  ItemKeyPath="Id"
+                  AutoScroll="true"
+                  Virtualizing="true"
+                  VirtualizationMode="Controls"
+                  VirtualizationThreshold="1"
+                  FixedItemSize="72"
+                  EstimatedItemSize="72"
+                  OverscanItems="3"
+                  VirtualizationCacheItems="24"
+                  ItemRecycling="Explicit"
+                  ProgressiveRendering="false"
+                  Spacing="4">
+      <ItemsControl.ItemTemplate>
+        <BenchmarkRecyclableRow Height="72"
+                                Padding="8,5"
+                                BorderStyle="FixedSingle"
+                                BackColor="#FAFAFA">
+          <Label Dock="Fill"
+                 Text="#{Binding Id}  {Binding Title}&#10;{Binding Detail}" />
+        </BenchmarkRecyclableRow>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </Grid>
+</Form>

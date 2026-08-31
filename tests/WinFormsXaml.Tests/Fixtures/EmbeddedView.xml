@@ -1,0 +1,3 @@
+<Panel>
+  <Label Name="EmbeddedLabel" Text="Embedded resource" />
+</Panel>

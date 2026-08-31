@@ -1,0 +1,50 @@
+name: Feature request
+description: Propose a focused addition to the markup, runtime, controls, or tooling.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: Explain the application code or manual control lookup this feature would remove.
+      placeholder: Today I need to... I would like to write...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-markup
+    attributes:
+      label: Proposed XML or C# API
+      description: Show the smallest authoring syntax that would solve the use case.
+
+  - type: textarea
+    id: precedent
+    attributes:
+      label: Native WinForms or WPF precedent
+      description: Note the closest native WinForms API and any WPF behavior that should inspire the design. WinForms terminology remains canonical when a native equivalent exists.
+
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: .NET 2 and legacy Windows behavior
+      description: Describe the expected fallback or graceful limitation if the native platform does not provide the capability.
+    validations:
+      required: true
+
+  - type: textarea
+    id: performance
+    attributes:
+      label: Performance and lifetime considerations
+      description: Mention expected item counts, refresh frequency, native handles, GDI objects, allocations, or ownership rules when relevant.
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope checks
+      options:
+        - label: This keeps C# 2.0 and .NET Framework 2.0 compatibility.
+          required: true
+        - label: This does not require a legacy package-syntax alias when one canonical syntax is sufficient.
+          required: true

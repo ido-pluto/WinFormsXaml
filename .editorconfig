@@ -1,0 +1,24 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+
+[*.{md,json,jsonc,mjs,mts,ts,xml,xsd,config,csproj,props,targets,nuspec,yml,yaml}]
+end_of_line = lf
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{ps1,sh}]
+end_of_line = lf
+indent_style = space
+indent_size = 2

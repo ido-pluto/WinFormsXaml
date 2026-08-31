@@ -1,0 +1,20 @@
+<Form Class="WinFormsXaml.Tests.VirtualCloseXmlFormHost"
+      Name="VirtualCloseForm"
+      Text="Virtual close-order regression"
+      Width="240"
+      Height="160">
+  <ItemsControl Name="VirtualRows"
+                Dock="Fill"
+                ItemsSource="{Binding Rows}"
+                AutoScroll="true"
+                Virtualizing="true"
+                VirtualizationThreshold="1"
+                ProgressiveRendering="false"
+                FixedItemSize="20"
+                OverscanItems="1">
+    <ItemsControl.ItemTemplate>
+      <Label Text="{Binding .}"
+             Height="20" />
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</Form>

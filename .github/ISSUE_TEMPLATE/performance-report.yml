@@ -1,0 +1,54 @@
+name: Performance report
+description: Report a repeatable slow load, refresh, scroll, allocation, handle, or GDI issue.
+title: "[Performance]: "
+labels:
+  - performance
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Scenario
+      description: Describe the operation that is slow or grows resources over time.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include representative XML, item shape, item count, update pattern, and virtualization options.
+    validations:
+      required: true
+
+  - type: textarea
+    id: measurements
+    attributes:
+      label: Measurements
+      description: Include warm-up, iteration count, elapsed time, realized/cache counts, native handle or GDI counts, and whether a debugger was attached.
+      placeholder: 10 warm-ups, 100 refreshes, median..., RealizedCount..., GDI...
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Include package/commit, .NET runtime, operating system, processor, and Wine/VM details when applicable.
+    validations:
+      required: true
+
+  - type: textarea
+    id: comparison
+    attributes:
+      label: Comparison or regression point
+      description: Include a previous version, item count threshold, or configuration that does not exhibit the problem.
+
+  - type: checkboxes
+    id: evidence
+    attributes:
+      label: Evidence checks
+      options:
+        - label: I measured a release build without treating debugger time as representative.
+          required: true
+        - label: I identified whether the measurement is native Windows, Wine/Mono, or a Windows 98 guest result.
+          required: true

@@ -1,0 +1,6 @@
+<Form Class="WinFormsXaml.Tests.ConstructorLoadingXmlFormHost"
+      Name="ConstructorLoadingForm"
+      Text="Constructor-loading form">
+  <Label Name="ConstructorLoadingLabel"
+         Text="Loaded" />
+</Form>

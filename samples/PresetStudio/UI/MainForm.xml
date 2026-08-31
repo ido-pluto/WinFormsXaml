@@ -1,0 +1,76 @@
+<Form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="../../../schemas/WinFormsXaml.xsd"
+      Class="PresetStudio.UI.MainForm"
+      Name="MainForm"
+      Text="WinFormsXaml preset studio"
+      Width="650"
+      Height="440"
+      StartPosition="CenterScreen">
+  <Presets Source="PresetStudio.UI.ThemePresets.xml"
+           SourceKind="EmbeddedResource" />
+  <Presets Source="UI/FilePresets.xml"
+           SourceKind="File" />
+
+  <Presets Name="Density"
+           Selected="Comfortable"
+           Default="Comfortable">
+    <Preset Name="Comfortable">
+      <Set Key="PagePadding" Value="22" />
+      <Set Key="ControlGap" Value="12" />
+      <Set Key="DetailsVisible" Value="true" />
+    </Preset>
+    <Preset Name="Compact">
+      <Set Key="PagePadding" Value="8" />
+      <Set Key="ControlGap" Value="4" />
+      <Set Key="DetailsVisible" Value="false" />
+    </Preset>
+  </Presets>
+
+  <Presets Name="Accent" Selected="Live">
+    <Preset Name="Live">
+      <Set Key="Color" Value="{Binding LiveAccent}" />
+    </Preset>
+  </Presets>
+
+  <FlexPanel Direction="Column"
+             Gap="{Preset Density.ControlGap}"
+             Padding="{Preset Density.PagePadding}"
+             BackColor="{Preset Theme.Surface}"
+             ForeColor="{Preset Theme.Text}">
+    <Label Text="Presets can hold color, text, size, visibility, or bindings"
+           AutoSize="true"
+           FontSize="12"
+           FontWeight="Bold"
+           ForeColor="{Preset Theme.Text}" />
+
+    <Label Text="This sentence is hidden by the Compact density preset."
+           AutoSize="true"
+           Visible="{Preset Density.DetailsVisible}"
+           ForeColor="{Preset Theme.Text}" />
+
+    <Label Text="{Preset Deployment.Note}"
+           AutoSize="true"
+           ForeColor="{Preset Theme.Text}" />
+
+    <FlexPanel Direction="Row" Wrap="true" Gap="8">
+      <Button Text="{Preset Theme.ButtonText}"
+              BackColor="{Preset Accent.Color}"
+              ForeColor="White"
+              Click="ToggleTheme_Click" />
+      <Button Text="Toggle density"
+              Click="ToggleDensity_Click" />
+      <Button Text="Change live accent"
+              Click="ChangeAccent_Click" />
+      <Button Text="Use high contrast"
+              Click="UseHighContrast_Click" />
+    </FlexPanel>
+
+    <Border Padding="14"
+            BorderBrush="{Preset Accent.Color}"
+            BorderThickness="2">
+      <Label Text="{Binding Status}"
+             AutoSize="true"
+             ForeColor="{Preset Theme.Text}" />
+    </Border>
+  </FlexPanel>
+</Form>

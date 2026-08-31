@@ -1,0 +1,9 @@
+<Component>
+  <Component.Properties>
+    <Property Name="Caption" Type="String" Required="true" />
+  </Component.Properties>
+  <Panel Width="150" Height="42">
+    <Label Text="{Binding Caption}" AutoSize="true" />
+    <Button Text="Open" Width="48" Height="22" />
+  </Panel>
+</Component>

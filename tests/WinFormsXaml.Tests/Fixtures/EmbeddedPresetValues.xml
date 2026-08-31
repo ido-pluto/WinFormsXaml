@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Presets Name="EmbeddedValues" Selected="Default">
+  <Preset Name="Default">
+    <Set Key="Caption" Value="Resolved from markup assembly" />
+  </Preset>
+</Presets>

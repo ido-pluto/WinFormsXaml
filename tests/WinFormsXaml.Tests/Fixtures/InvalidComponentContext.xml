@@ -1,0 +1,5 @@
+<Component>
+  <Panel>
+    <Label Text="{Binding Count}" />
+  </Panel>
+</Component>

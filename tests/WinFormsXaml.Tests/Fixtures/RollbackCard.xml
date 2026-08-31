@@ -1,0 +1,3 @@
+<Component Class="WinFormsXaml.Tests.RollbackCodeBehind">
+  <RollbackProbePanel />
+</Component>

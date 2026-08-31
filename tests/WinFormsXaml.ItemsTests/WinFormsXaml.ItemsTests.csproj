@@ -1,0 +1,75 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E2025851-77E1-431F-8A16-67906FFB7E43}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WinFormsXaml.ItemsTests</RootNamespace>
+    <AssemblyName>WinFormsXaml.ItemsTests</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\artifacts\items-tests\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\artifacts\items-tests\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CrossItemControlRecyclingTests.cs" />
+    <Compile Include="DirectVirtualizationOriginRollbackTests.cs" />
+    <Compile Include="FrameworkScrollBarTests.cs" />
+    <Compile Include="HorizontalRtlItemsControlTests.cs" />
+    <Compile Include="ItemsControlThemedScrollBarTests.cs" />
+    <Compile Include="ItemTemplateBlueprintTests.cs" />
+    <Compile Include="ItemsControlScrollCommandTests.cs" />
+    <Compile Include="ItemsControlScrollIntoViewTests.cs" />
+    <Compile Include="ItemsControlScrollEventEfficiencyTests.cs" />
+    <Compile Include="ItemsControlSmoothScrollTests.cs" />
+    <Compile Include="ItemsControlDeferredScrollBitmapTests.cs" />
+    <Compile Include="ItemsControlStyledSmoothBurstTests.cs" />
+    <Compile Include="ItemsControlWrapTests.cs" />
+    <Compile Include="LightweightVirtualizationTests.cs" />
+    <Compile Include="NonVirtualGeometryConfigurationTests.cs" />
+    <Compile Include="NonVirtualItemsOptimizationTests.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReactiveRenderedRecordIndexTests.cs" />
+    <Compile Include="VirtualizationPrimitiveTests.cs" />
+    <Compile Include="VirtualizationScrollStressTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Fixtures\VirtualConditionalCard.xml">
+      <LogicalName>WinFormsXaml.ItemsTests.Fixtures.VirtualConditionalCard.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Fixtures\VirtualRollbackCard.xml">
+      <LogicalName>WinFormsXaml.ItemsTests.Fixtures.VirtualRollbackCard.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WinFormsXaml\WinFormsXaml.csproj">
+      <Project>{A17ED9E1-4260-4D25-90B9-527994E3DE94}</Project>
+      <Name>WinFormsXaml</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

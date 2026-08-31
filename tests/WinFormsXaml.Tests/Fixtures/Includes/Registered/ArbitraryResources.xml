@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Includes>
+  <Shared.Resources>
+    <Presets Name="ArbitraryTheme" Selected="Default">
+      <Preset Name="Default">
+        <Set Key="Protected" Value="include-must-not-replace-app" />
+        <Set Key="Layered" Value="included-layer" />
+        <Set Key="IncludedOnly" Value="included-only" />
+      </Preset>
+    </Presets>
+
+    <Style TargetType="Label">
+      <Setter Property="BackColor" Value="#FFD5E1ED" />
+      <Setter Property="BorderStyle" Value="FixedSingle" />
+    </Style>
+  </Shared.Resources>
+</Includes>

@@ -1,0 +1,26 @@
+<Component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="../../../../schemas/WinFormsXaml.xsd">
+  <Component.Properties>
+    <Property Name="Caption" Type="String" Default="Metric" />
+    <Property Name="Value" Type="Int32" Default="0" />
+    <Property Name="AccentColor"
+              Type="System.Drawing.Color"
+              Default="SteelBlue" />
+    <Property Name="TileWidth" Type="Int32" Default="210" />
+  </Component.Properties>
+
+  <Border BorderBrush="{Binding AccentColor}"
+          BorderThickness="1"
+          Padding="10"
+          Width="{Binding TileWidth}">
+    <StackPanel>
+      <Label Text="{Binding Caption}"
+             AutoSize="true" />
+      <Label Text="{Binding Value}"
+             ForeColor="{Binding AccentColor}"
+             FontSize="16"
+             FontWeight="Bold"
+             AutoSize="true" />
+    </StackPanel>
+  </Border>
+</Component>
