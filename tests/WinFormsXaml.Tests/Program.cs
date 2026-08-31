@@ -5421,9 +5421,9 @@ namespace WinFormsXaml.Tests
                     RightToLeft.Yes,
                     inheritedDirectionTarget.RightToLeft,
                     "normal controls still inherit RightToLeft");
-                AssertEqual(
+                AssertWebBrowserSourceMatchesNative(
                     state.NullableUri,
-                    target.Url,
+                    target,
                     "initial typed browser Source");
 
                 state.NullableUri = null;
@@ -5454,9 +5454,9 @@ namespace WinFormsXaml.Tests
                 }
 
                 AssertTrue(itemTarget != null, "item browser realized");
-                AssertEqual(
+                AssertWebBrowserSourceMatchesNative(
                     item.NullableUri,
-                    itemTarget.Url,
+                    itemTarget,
                     "item initial typed Source");
 
                 item.Version = 2;
@@ -7471,6 +7471,7 @@ namespace WinFormsXaml.Tests
             }
 
             string iconMarkupPath = EscapeXmlAttributeValue(iconPath);
+            Icon literalExpectedIcon = new Icon(iconPath);
 
             XamlRuntime first = XamlRuntime.Load("<Form />");
             XamlRuntime second = XamlRuntime.Load("<Form />");
@@ -7543,11 +7544,11 @@ namespace WinFormsXaml.Tests
                     literalIconFirstForm != null,
                     "icon-first literal icon root is a Form");
                 AssertIconsEqual(
-                    SystemIcons.Warning,
+                    literalExpectedIcon,
                     literalDirectiveFirstForm.Icon,
                     "literal Icon wins when UseApplicationIcon comes first");
                 AssertIconsEqual(
-                    SystemIcons.Warning,
+                    literalExpectedIcon,
                     literalIconFirstForm.Icon,
                     "literal Icon wins when UseApplicationIcon comes last");
                 AssertTrue(
@@ -7649,6 +7650,7 @@ namespace WinFormsXaml.Tests
                 boundDirectiveFirst.Dispose();
                 boundIconFirst.Dispose();
                 styled.Dispose();
+                literalExpectedIcon.Dispose();
 
                 if (File.Exists(iconPath))
                     File.Delete(iconPath);
@@ -8360,6 +8362,25 @@ namespace WinFormsXaml.Tests
                 ". Expected <null> or <about:blank>, actual <" +
                 source +
                 ">.");
+        }
+
+        private static void AssertWebBrowserSourceMatchesNative(
+            Uri source,
+            WebBrowser actual,
+            string message)
+        {
+            Uri nativeSource;
+
+            using (WebBrowser native = new WebBrowser())
+            {
+                native.Url = source;
+                nativeSource = native.Url;
+            }
+
+            AssertEqual(
+                nativeSource,
+                actual.Url,
+                message);
         }
 
         private static void AssertTrue(bool condition, string message)
