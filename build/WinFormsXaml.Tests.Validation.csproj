@@ -16,6 +16,7 @@
     <Compile Include="../tests/WinFormsXaml.Tests/BindingAuditRegressionTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/ComponentCodeBehindTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/ConditionExpressionTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/ConditionalMarkupTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/CoreAuditRegressionTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/FormConvenienceTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/ImageControlRegressionTests.cs" />
@@ -24,6 +25,7 @@
     <Compile Include="../tests/WinFormsXaml.Tests/MarkupDiagnosticsTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/NotifyPropertyChangedBindingTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/PresetAuditRegressionTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.Tests/PresetConditionExpressionTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/RuntimeOwnershipRegressionTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/TabViewIntegrationTests.cs" />
     <Compile Include="../tests/WinFormsXaml.Tests/Program.cs" />

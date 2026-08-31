@@ -20,6 +20,7 @@
     <Compile Include="../tests/WinFormsXaml.ItemsTests/ItemsControlThemedScrollBarTests.cs" />
     <Compile Include="../tests/WinFormsXaml.ItemsTests/ItemTemplateBlueprintTests.cs" />
     <Compile Include="../tests/WinFormsXaml.ItemsTests/ItemsControlScrollCommandTests.cs" />
+    <Compile Include="../tests/WinFormsXaml.ItemsTests/ItemsControlScrollEventEfficiencyTests.cs" />
     <Compile Include="../tests/WinFormsXaml.ItemsTests/ItemsControlScrollIntoViewTests.cs" />
     <Compile Include="../tests/WinFormsXaml.ItemsTests/ItemsControlSmoothScrollTests.cs" />
     <Compile Include="../tests/WinFormsXaml.ItemsTests/ItemsControlDeferredScrollBitmapTests.cs" />
