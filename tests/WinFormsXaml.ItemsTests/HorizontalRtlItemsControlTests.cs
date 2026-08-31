@@ -86,7 +86,7 @@ namespace WinFormsXaml.ItemsTests
             TestOrdinaryRangeAndFlowTransitionsPreserveLogicalOffset();
             TestDirectVirtualNativeLogicalMappingAndScrollToIndex();
             TestDirectNativeAndProgrammaticOriginChangesPublishViewport();
-            TestPreHandleDirectOriginObserverIsNativeBacked();
+            TestDirectOriginObserverIsNativeBacked();
             TestStyledOrdinaryAndDirectUseLogicalValues();
             TestKeepScrollBarOnRightCoalescesHorizontalLayout();
             TestKeepScrollBarOnRightRollbackAndReentrantOwnership();
@@ -434,8 +434,7 @@ namespace WinFormsXaml.ItemsTests
             }
         }
 
-        private static void
-            TestPreHandleDirectOriginObserverIsNativeBacked()
+        private static void TestDirectOriginObserverIsNativeBacked()
         {
             const string markup =
                 "<ItemsControl Name='Rows' Width='180' Height='70' " +
@@ -457,10 +456,17 @@ namespace WinFormsXaml.ItemsTests
                 host.ContentRightToLeft = true;
                 host.SetItems(CreateRows(120));
                 AssertTrue(
-                    host.DirectVirtualActive && !host.IsHandleCreated,
-                    "pre-handle fixture activates direct mode before HWND creation");
+                    host.DirectVirtualActive,
+                    "fixture activates direct mode");
 
+                // WinForms may create the parent HWND eagerly while adding the
+                // first realized child, or defer it until CreateControl. The
+                // observer contract begins once the parent handle exists and
+                // must be identical for both native lifecycle paths.
                 host.CreateControl();
+                AssertTrue(
+                    host.IsHandleCreated,
+                    "fixture creates the ItemsControl HWND");
                 Control marker = GetScrollExtentMarker(host);
                 AssertTrue(
                     marker != null &&
