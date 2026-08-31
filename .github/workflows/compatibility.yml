@@ -31,7 +31,10 @@ permissions:
 
 jobs:
   net20:
-    runs-on: windows-latest
+    # MSBuild 18 no longer parses the Visual Studio 2005 solution format.
+    # Keep the shipping solution compatible with Visual Studio 2005 and run
+    # the modern validation gate with the last compatible MSBuild generation.
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-dotnet@v5
@@ -41,6 +44,8 @@ jobs:
         with:
           nuget-version: '6.12.1'
       - uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '[17.0,18.0)'
       - name: Verify .NET 2.0 builds, tests, and Windows-native marquee
         shell: pwsh
         run: ./build/Verify.ps1 -SkipDocs -RequireNativeMarquee
