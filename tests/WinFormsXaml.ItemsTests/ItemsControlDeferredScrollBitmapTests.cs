@@ -115,7 +115,7 @@ namespace WinFormsXaml.ItemsTests
 
             public readonly XamlRuntime.ItemsControl Host;
             public readonly ScrollBarControl Bar;
-            public readonly Label FirstRow;
+            public readonly Control FirstRow;
 
             public Fixture()
                 : this(44, true)
@@ -130,6 +130,16 @@ namespace WinFormsXaml.ItemsTests
             public Fixture(int itemHeight, bool smoothScroll)
             {
                 string markup =
+                    "<Panel>" +
+                    "  <Presets Name='Theme' Selected='Dark'>" +
+                    "    <Preset Name='Dark'>" +
+                    "      <Set Key='ItemBackground' Value='#262B32' />" +
+                    "      <Set Key='ItemBorder' Value='#454C57' />" +
+                    "      <Set Key='Accent' Value='#4F9DFF' />" +
+                    "      <Set Key='Text' Value='#F3F5F7' />" +
+                    "      <Set Key='Link' Value='#69AEFF' />" +
+                    "    </Preset>" +
+                    "  </Presets>" +
                     "<ItemsControl Name='Rows' Width='360' Height='180' " +
                     "AutoScroll='true' Virtualizing='false' " +
                     "ProgressiveRendering='false' SmoothScroll='" +
@@ -141,11 +151,26 @@ namespace WinFormsXaml.ItemsTests
                     "        TrackColor='#202124' ThumbColor='#80868B' />" +
                     "  </ItemsControl.VerticalScrollStyle>" +
                     "  <ItemsControl.ItemTemplate>" +
-                    "    <Label Width='320' Height='" +
+                    "    <Border Width='320' Height='" +
                     itemHeight.ToString() + "' " +
-                    "           Text='{Binding Title}' />" +
+                    "            Padding='2' " +
+                    "            Background='{Preset Theme.ItemBackground}' " +
+                    "            BorderBrush='{Preset Theme.ItemBorder}'>" +
+                    "      <StackPanel Orientation='Horizontal' Spacing='4'>" +
+                    "        <Panel Width='18' Height='18' " +
+                    "               BackColor='{Preset Theme.Accent}' />" +
+                    "        <StackPanel Width='286' Orientation='Vertical'>" +
+                    "          <Label Height='18' " +
+                    "                 ForeColor='{Preset Theme.Text}' " +
+                    "                 Text='{Binding Title}' />" +
+                    "          <HyperlinkLabel Height='18' Text='Open' " +
+                    "                 LinkColor='{Preset Theme.Link}' />" +
+                    "        </StackPanel>" +
+                    "      </StackPanel>" +
+                    "    </Border>" +
                     "  </ItemsControl.ItemTemplate>" +
-                    "</ItemsControl>";
+                    "</ItemsControl>" +
+                    "</Panel>";
 
                 _runtime = XamlRuntime.Load(markup);
                 _form = new Form();
@@ -209,7 +234,7 @@ namespace WinFormsXaml.ItemsTests
             private readonly Button _focusSink;
 
             public readonly XamlRuntime.ItemsControl Host;
-            public readonly Label FirstRow;
+            public readonly Control FirstRow;
 
             public NativeFixture()
                 : this(false, false, true)
@@ -232,6 +257,16 @@ namespace WinFormsXaml.ItemsTests
                 int itemWidth = horizontal ? 124 : 320;
                 int itemHeight = horizontal ? 140 : 44;
                 string markup =
+                    "<Panel>" +
+                    "  <Presets Name='Theme' Selected='Dark'>" +
+                    "    <Preset Name='Dark'>" +
+                    "      <Set Key='ItemBackground' Value='#262B32' />" +
+                    "      <Set Key='ItemBorder' Value='#454C57' />" +
+                    "      <Set Key='Accent' Value='#4F9DFF' />" +
+                    "      <Set Key='Text' Value='#F3F5F7' />" +
+                    "      <Set Key='Link' Value='#69AEFF' />" +
+                    "    </Preset>" +
+                    "  </Presets>" +
                     "<ItemsControl Name='Rows' Width='360' Height='180' " +
                     "AutoScroll='true' Virtualizing='false' " +
                     "ProgressiveRendering='false' SmoothScroll='" +
@@ -239,11 +274,26 @@ namespace WinFormsXaml.ItemsTests
                     "SmoothScrollDuration='420' ItemKeyPath='Id' " +
                     "Spacing='2' Orientation='" + orientation + "'>" +
                     "  <ItemsControl.ItemTemplate>" +
-                    "    <Label Width='" + itemWidth.ToString() +
+                    "    <Border Width='" + itemWidth.ToString() +
                     "' Height='" + itemHeight.ToString() + "' " +
-                    "           Text='{Binding Title}' />" +
+                    "            Padding='2' " +
+                    "            Background='{Preset Theme.ItemBackground}' " +
+                    "            BorderBrush='{Preset Theme.ItemBorder}'>" +
+                    "      <StackPanel Orientation='Horizontal' Spacing='4'>" +
+                    "        <Panel Width='18' Height='18' " +
+                    "               BackColor='{Preset Theme.Accent}' />" +
+                    "        <StackPanel Width='92' Orientation='Vertical'>" +
+                    "          <Label Height='18' " +
+                    "                 ForeColor='{Preset Theme.Text}' " +
+                    "                 Text='{Binding Title}' />" +
+                    "          <HyperlinkLabel Height='18' Text='Open' " +
+                    "                 LinkColor='{Preset Theme.Link}' />" +
+                    "        </StackPanel>" +
+                    "      </StackPanel>" +
+                    "    </Border>" +
                     "  </ItemsControl.ItemTemplate>" +
-                    "</ItemsControl>";
+                    "</ItemsControl>" +
+                    "</Panel>";
 
                 _runtime = XamlRuntime.Load(markup);
                 _form = new Form();
@@ -290,7 +340,7 @@ namespace WinFormsXaml.ItemsTests
         {
             private readonly XamlRuntime.ItemsControl _host;
             private readonly ScrollBarControl _bar;
-            private readonly Label _row;
+            private readonly Control _row;
             private readonly EventHandler _valueChanged;
             private readonly int _initialPhysicalOffset;
             private readonly Rectangle _initialRowBounds;
@@ -302,7 +352,7 @@ namespace WinFormsXaml.ItemsTests
             public NaturalFrameProbe(
                 XamlRuntime.ItemsControl host,
                 ScrollBarControl bar,
-                Label row)
+                Control row)
             {
                 _host = host;
                 _bar = bar;
@@ -378,7 +428,7 @@ namespace WinFormsXaml.ItemsTests
 
         internal static void RunAll()
         {
-            TestImmediateNativeAndStyledBurstsAreAtomic();
+            TestImmediateNativeAndStyledInputUsesLiveTree();
             TestNativeScrollbarUsesDeferredBitmapTransaction();
             TestNativeLinePageAndWheelBurstRetargetsOneViewport();
             TestNativeNonRelativeCommandCommitsBeforeFallthrough();
@@ -392,15 +442,17 @@ namespace WinFormsXaml.ItemsTests
             TestGeometryAndPublicationInvalidationEndTheTransaction();
         }
 
-        private static void TestImmediateNativeAndStyledBurstsAreAtomic()
+        private static void
+            TestImmediateNativeAndStyledInputUsesLiveTree()
         {
             using (NativeFixture fixture =
                 new NativeFixture(false, false, false))
             {
                 XamlRuntime.ItemsControl host = fixture.Host;
-                int physical = GetPhysicalOffset(host);
-                Rectangle rowBounds = fixture.FirstRow.Bounds;
+                long captures = host.ScrollBitmapCaptureCountForTest;
                 long commits = host.ScrollBitmapCommitCountForTest;
+                long visualPublications =
+                    host.ScrollVisualFramePublicationCountForTest;
 
                 SendNativeScrollCommand(
                     host,
@@ -411,10 +463,17 @@ namespace WinFormsXaml.ItemsTests
                     WindowVerticalScroll,
                     ScrollBarPageIncrement);
 
+                if (SystemInformation.MouseWheelScrollLines != 0)
+                {
+                    host.ProcessMouseWheelDelta(-120);
+                    host.ProcessMouseWheelDelta(120);
+                    host.ProcessMouseWheelDelta(-120);
+                }
+
                 AssertTrue(
-                    host.ScrollBitmapCacheActiveForTest &&
-                    host.ScrollBitmapImmediateCommitPendingForTest,
-                    "immediate native input uses one deferred presentation transaction");
+                    !host.ScrollBitmapCacheActiveForTest &&
+                    !host.SmoothScrollAnimationActiveForTest,
+                    "default native input stays on the live control tree");
                 AssertTrue(
                     host.GetLogicalScrollOffset() > 0,
                     "immediate native input publishes its destination synchronously");
@@ -423,32 +482,21 @@ namespace WinFormsXaml.ItemsTests
                     GetNativeVerticalThumbPosition(host),
                     "immediate native content and thumb publish together");
                 AssertEqual(
-                    physical,
-                    GetPhysicalOffset(host),
-                    "immediate native input keeps the live display origin fixed");
-                AssertEqual(
-                    rowBounds,
-                    fixture.FirstRow.Bounds,
-                    "immediate native input does not expose per-row HWND moves");
-
-                PumpUntil(
-                    delegate
-                    {
-                        return
-                            !host.ScrollBitmapCacheActiveForTest &&
-                            !host.ScrollBitmapImmediateCommitPendingForTest;
-                    },
-                    2000,
-                    "immediate native input settles after the burst");
-
-                AssertEqual(
                     host.GetLogicalScrollOffset(),
                     GetPhysicalOffset(host),
-                    "immediate native settle aligns the live tree once");
+                    "immediate native input moves the live display origin");
                 AssertEqual(
-                    commits + 1L,
+                    captures,
+                    host.ScrollBitmapCaptureCountForTest,
+                    "immediate native input does not capture themed rows");
+                AssertEqual(
+                    commits,
                     host.ScrollBitmapCommitCountForTest,
-                    "immediate native burst performs one retained-tree move");
+                    "immediate native input has no deferred bitmap commit");
+                AssertTrue(
+                    host.ScrollVisualFramePublicationCountForTest >
+                        visualPublications,
+                    "immediate native input publishes its live visual frame");
 
                 using (Bitmap background = new Bitmap(2, 2))
                 {
@@ -478,8 +526,7 @@ namespace WinFormsXaml.ItemsTests
             {
                 XamlRuntime.ItemsControl host = fixture.Host;
                 ScrollBarControl bar = fixture.Bar;
-                int physical = GetPhysicalOffset(host);
-                Rectangle rowBounds = fixture.FirstRow.Bounds;
+                long captures = host.ScrollBitmapCaptureCountForTest;
                 long commits = host.ScrollBitmapCommitCountForTest;
 
                 bar.ExecuteScrollCommand(
@@ -487,41 +534,33 @@ namespace WinFormsXaml.ItemsTests
                 bar.ExecuteScrollCommand(
                     ScrollEventType.LargeIncrement);
 
+                if (SystemInformation.MouseWheelScrollLines != 0)
+                {
+                    host.ProcessMouseWheelDelta(-120);
+                    host.ProcessMouseWheelDelta(120);
+                    host.ProcessMouseWheelDelta(-120);
+                }
+
                 AssertTrue(
-                    host.ScrollBitmapCacheActiveForTest &&
-                    host.ScrollBitmapImmediateCommitPendingForTest,
-                    "immediate styled input uses the shared bitmap transaction");
+                    !host.ScrollBitmapCacheActiveForTest &&
+                    !host.SmoothScrollAnimationActiveForTest,
+                    "default styled input stays on the live control tree");
                 AssertEqual(
                     host.GetLogicalScrollOffset(),
                     bar.Value,
                     "immediate styled content and thumb publish together");
                 AssertEqual(
-                    physical,
-                    GetPhysicalOffset(host),
-                    "immediate styled input keeps the live origin fixed");
-                AssertEqual(
-                    rowBounds,
-                    fixture.FirstRow.Bounds,
-                    "immediate styled input does not expose per-row HWND moves");
-
-                PumpUntil(
-                    delegate
-                    {
-                        return
-                            !host.ScrollBitmapCacheActiveForTest &&
-                            !host.ScrollBitmapImmediateCommitPendingForTest;
-                    },
-                    2000,
-                    "immediate styled input settles after the burst");
-
-                AssertEqual(
                     host.GetLogicalScrollOffset(),
                     GetPhysicalOffset(host),
-                    "immediate styled settle aligns the live tree once");
+                    "immediate styled input moves the live origin");
                 AssertEqual(
-                    commits + 1L,
+                    captures,
+                    host.ScrollBitmapCaptureCountForTest,
+                    "immediate styled input does not capture themed rows");
+                AssertEqual(
+                    commits,
                     host.ScrollBitmapCommitCountForTest,
-                    "immediate styled burst performs one retained-tree move");
+                    "immediate styled input has no deferred bitmap commit");
             }
         }
 
@@ -530,7 +569,7 @@ namespace WinFormsXaml.ItemsTests
             using (NativeFixture fixture = new NativeFixture())
             {
                 XamlRuntime.ItemsControl host = fixture.Host;
-                Label row = fixture.FirstRow;
+                Control row = fixture.FirstRow;
                 int initialPhysical = GetPhysicalOffset(host);
                 Rectangle initialBounds = row.Bounds;
                 int rowLocationChanges = 0;
@@ -1030,7 +1069,7 @@ namespace WinFormsXaml.ItemsTests
             {
                 XamlRuntime.ItemsControl host = fixture.Host;
                 ScrollBarControl bar = fixture.Bar;
-                Label row = fixture.FirstRow;
+                Control row = fixture.FirstRow;
                 int initialLogical = host.GetLogicalScrollOffset();
                 int initialPhysical = GetPhysicalOffset(host);
                 Rectangle initialBounds = row.Bounds;
@@ -1338,15 +1377,15 @@ namespace WinFormsXaml.ItemsTests
             return rows;
         }
 
-        private static Label FindFirstRenderedRow(
+        private static Control FindFirstRenderedRow(
             XamlRuntime.ItemsControl host)
         {
-            Label first = null;
+            Control first = null;
             int i;
 
             for (i = 0; i < host.Controls.Count; i++)
             {
-                Label candidate = host.Controls[i] as Label;
+                Control candidate = host.Controls[i];
 
                 if (candidate == null)
                     continue;

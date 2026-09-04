@@ -563,8 +563,8 @@ virtualization is required.
 
 ## Choose smooth or immediate scrolling
 
-`ItemsControl` uses a short smooth transition by default for mouse-wheel and
-scrollbar line/page commands:
+`ItemsControl` uses native-style immediate movement by default. Smooth wheel
+and scrollbar line/page transitions are opt-in:
 
 ```xml
 <ItemsControl Name="Results"
@@ -577,11 +577,11 @@ scrollbar line/page commands:
 </ItemsControl>
 ```
 
-`AutoScroll` and `SmoothScroll` both default to `true`, and
+`AutoScroll` defaults to `true`, `SmoothScroll` defaults to `false`, and
 `SmoothScrollDuration` defaults to `120` milliseconds. The duration
 must be greater than zero. All three attributes accept `Binding`, `Function`,
-and `Preset` expressions as well as literal values. Set `SmoothScroll="false"`
-when the requested offset should appear immediately.
+and `Preset` expressions as well as literal values. Set `SmoothScroll="true"`
+only when an interpolated transition is desired.
 
 Repeated wheel, arrow, or page input updates the active target instead of
 queuing independent animations. Retargeting preserves the transition's current
@@ -734,13 +734,12 @@ renderer:
 | `VirtualizationMode="Controls"` | Uses the same logical offset and synchronous realized-range publication as the native scrollbar. |
 | `VirtualizationMode="Lightweight"` | Uses the same owner-drawn row surface and strict template profile; adding a style does not relax or change that profile. |
 
-With `SmoothScroll="false"`, wheel, arrow, and page commands publish the target
-immediately. With `SmoothScroll="true"`, those commands retarget the one
-coalesced transition. For an eligible fully realized list, native and styled
-scrollbars both use the bounded bitmap transaction: immediate or intermediate
-frames move cached pixels, their thumb remains synchronized, and the live
-child-control tree moves once at settle. Virtualized modes continue to update
-only their visible range.
+With the default `SmoothScroll="false"`, wheel, arrow, and page commands publish
+the target by moving the live control tree directly; themed children are never
+replaced by a bitmap. With `SmoothScroll="true"`, those commands retarget one
+coalesced transition. An eligible fully realized list can use the bounded
+bitmap transaction for its intermediate frames, while virtualized modes
+continue to update only their visible range.
 Thumb behavior is controlled separately by `LiveScroll`: when true, dragging
 updates content directly; when false, the framework thumb moves during the drag
 and commits the content offset when released.

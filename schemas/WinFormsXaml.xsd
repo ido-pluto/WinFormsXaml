@@ -1491,8 +1491,8 @@
     <xs:attribute name="LiveScroll" type="BooleanValue">
       <xs:annotation><xs:documentation>Updates content while the native scrollbar thumb is dragged even when the operating-system preference disables live contents.</xs:documentation></xs:annotation>
     </xs:attribute>
-    <xs:attribute name="SmoothScroll" type="BooleanValue" default="true">
-      <xs:annotation><xs:documentation>ItemsControl only. True by default. Wheel and native line/page commands use one coalesced UI-thread animation; repeated input retargets the active transition instead of queuing another one. Set false for immediate destinations with a coalesced live-tree commit. Scrollbar thumb tracking and thumb release remain immediate and cancel any active transition. Boolean literals and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>
+    <xs:attribute name="SmoothScroll" type="BooleanValue" default="false">
+      <xs:annotation><xs:documentation>ItemsControl only. False by default, using native-style live-control movement. When true, wheel and line/page commands use one coalesced UI-thread animation; repeated input retargets the active transition instead of queuing another one. Scrollbar thumb tracking and thumb release remain immediate and cancel any active transition. Boolean literals and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>
     </xs:attribute>
     <xs:attribute name="SmoothScrollDuration" type="PositiveIntegerValue" default="120">
       <xs:annotation><xs:documentation>ItemsControl only. Positive duration in milliseconds of one coalesced smooth-scroll transition; the default is 120. Positive integer literals and Binding, Function, or Preset expressions are accepted.</xs:documentation></xs:annotation>

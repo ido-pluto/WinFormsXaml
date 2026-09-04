@@ -81,16 +81,15 @@ framework-owned scrollbar is a separate sibling HWND outside the translated
 item collection, so the same content move cannot move its track or arrow
 buttons. The runtime updates only its thumb state.
 
-An eligible non-virtual native or styled relative-scroll gesture goes one step
-further. The runtime captures a bounded slice around the current viewport and
+An eligible non-virtual native or styled gesture with
+`SmoothScroll=true` captures a bounded slice around the current viewport and
 destination, then paints from that bitmap while leaving the complete live
-control tree at one physical origin. `SmoothScroll=true` interpolates the
-cached frames. `SmoothScroll=false` publishes each requested destination
-immediately but coalesces the live tree move until 80 ms of input idle. Settle
-performs one real native move in either mode. The frame is one clipped unscaled
+control tree at one physical origin. The frame is one clipped unscaled
 bitmap copy; compatibility scanning is cached for the committed item
 publication. The cache is capped at 12 MiB per active host and is released
-after the gesture. It is deliberately bypassed for focused content,
+after the gesture. The default `SmoothScroll=false` path always moves the live
+tree directly and never captures themed item content. The cache is deliberately
+bypassed for focused content,
 transparent hosts, wrapping, background images, Controls or Lightweight
 virtualization, horizontal RTL, and native-hosted controls whose pixels cannot
 be captured reliably. A hit test, focus entry,
@@ -111,11 +110,10 @@ already translated those child windows, so the runtime publishes the new
 logical viewport without repeating item measurement, slot positioning, or
 scroll-extent reconciliation. A viewport change, invalid measurement cache,
 new realization range, validation, or data patch deliberately returns to the
-complete correctness path. `SmoothScroll` defaults to `true` for responsive
-wheel and arrow behavior. Set it to `false` when immediate destination changes
-are preferred; eligible ordinary hosts still coalesce the retained child-tree
-move. For a small or medium list whose complete controls must stay alive, the
-normal path is the simplest and most native choice. For a large list,
+complete correctness path. `SmoothScroll` defaults to `false` for native-style
+wheel and arrow behavior. Set it to `true` only when the interpolated
+presentation is desired. For a small or medium list whose complete controls
+must stay alive, the normal path is the simplest and most native choice. For a large list,
 explicitly select Controls virtualization; for a compatible paint-only
 template, Lightweight uses one owner-drawn host and removes the per-row
 native-window cost.
@@ -156,10 +154,9 @@ the scroll-translated viewport; `ScrollableControl` has no path that can move
 its arrow or track geometry. The forbidden cross axis is suppressed before it
 can create a one-frame client-size change.
 
-Immediate versus smooth behavior uses the same presentation transaction with
-either scrollbar implementation. With `SmoothScroll=false`, wheel, arrow, and
-page commands publish the requested target immediately and defer one live-tree
-move until the short input burst settles. With `SmoothScroll=true`, they
+With `SmoothScroll=false`, wheel, arrow, and page commands use the live tree and
+publish the requested target immediately with either scrollbar implementation.
+With `SmoothScroll=true`, they use the bounded presentation transaction and
 publish the coalesced intermediate offsets required by one fractional,
 velocity-continuous transition. Retargeting changes the destination without
 restarting the motion, and rounded duplicate frames do not move content or

@@ -101,8 +101,8 @@ namespace WinFormsXaml.ItemsTests
             using (ItemsControl host = new ItemsControl())
             {
                 AssertTrue(
-                    host.SmoothScroll,
-                    "smooth scrolling is enabled by default");
+                    !host.SmoothScroll,
+                    "smooth scrolling is opt-in by default");
                 AssertEqual(
                     120,
                     host.SmoothScrollDuration,

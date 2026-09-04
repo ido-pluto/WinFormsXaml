@@ -151,8 +151,9 @@ three version values differs from the policy above.
 ## Package identity
 
 The checked-in NuGet metadata identifies `ido-pluto` as the author, uses the
-MIT license expression, and links both the package website and its Git source
-to <https://github.com/ido-pluto/WinFormsXaml>.
+MIT license expression, links the package website to
+<https://ido-pluto.github.io/WinFormsXaml/>, and links its Git source to
+<https://github.com/ido-pluto/WinFormsXaml>.
 
 The pack workflows remain local and never publish a package. Publishing to a
 NuGet feed is a separate, explicit release action.

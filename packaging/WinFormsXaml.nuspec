@@ -6,7 +6,7 @@
     <title>WinFormsXaml</title>
     <authors>ido-pluto</authors>
     <license type="expression">MIT</license>
-    <projectUrl>https://github.com/ido-pluto/WinFormsXaml</projectUrl>
+    <projectUrl>https://ido-pluto.github.io/WinFormsXaml/</projectUrl>
     <repository type="git" url="https://github.com/ido-pluto/WinFormsXaml.git" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A lightweight XML UI runtime for Windows Forms with reactive one-way and two-way bindings, dynamic presets, reusable components, layout containers, and virtualized repeating content.</description>

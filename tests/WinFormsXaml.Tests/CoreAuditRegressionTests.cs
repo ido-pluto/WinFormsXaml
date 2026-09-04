@@ -2857,12 +2857,8 @@ namespace WinFormsXaml.Tests
                         String.Equals(
                             fields[i].Name,
                             "_smoothScrollTimer",
-                            StringComparison.Ordinal) ||
-                        String.Equals(
-                            fields[i].Name,
-                            "_scrollBitmapImmediateCommitTimer",
                             StringComparison.Ordinal),
-                        "item scrolling owns only its two lazy gesture timers");
+                        "item scrolling owns only its lazy explicit-animation timer");
                 }
             }
 

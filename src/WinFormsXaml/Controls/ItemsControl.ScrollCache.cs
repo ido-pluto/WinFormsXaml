@@ -11,7 +11,6 @@ namespace WinFormsXaml
         {
             private const long ScrollBitmapCacheMaximumBytes =
                 12L * 1024L * 1024L;
-            private const int ScrollBitmapImmediateCommitDelay = 80;
             private const int WmNonClientHitTest = 0x0084;
 
             private Bitmap _scrollBitmapCache;
@@ -28,9 +27,6 @@ namespace WinFormsXaml
             private int _scrollBitmapRefreshGeneration;
             private Orientation _scrollBitmapOrientation;
             private int _scrollBitmapMaximum;
-            private Timer _scrollBitmapImmediateCommitTimer;
-            private bool _scrollBitmapImmediateFrame;
-            private bool _scrollBitmapImmediateCommitPending;
             private ArrayList _scrollBitmapEligibilityRecords;
             private long _scrollBitmapEligibilityPublicationRevision;
             private int _scrollBitmapEligibilityRefreshGeneration;
@@ -42,8 +38,8 @@ namespace WinFormsXaml
 #endif
 
             /// <summary>
-            /// Fixed sibling surface used while an animated or immediate
-            /// relative-scroll burst owns a valid bitmap slice. It never joins
+            /// Fixed sibling surface used while an explicitly animated
+            /// scroll owns a valid bitmap slice. It never joins
             /// ItemsControl.Controls and is therefore not translated by
             /// ScrollableControl.
             /// </summary>
@@ -328,111 +324,6 @@ namespace WinFormsXaml
                     RefreshGeneration;
                 _scrollBitmapEligibilityResult = eligible;
                 return eligible;
-            }
-
-            /// <summary>
-            /// Publishes an immediate line/page/wheel destination from the
-            /// same fixed bitmap viewport used by animated scrolling. The
-            /// logical position and scrollbar move now, while the expensive
-            /// retained child-window translation is coalesced until the input
-            /// burst becomes idle. This keeps SmoothScroll=false immediate
-            /// without exposing WinForms' per-child move/paint sequence.
-            /// </summary>
-            private bool TryApplyImmediateScrollBitmapTarget(
-                int requestedOffset,
-                out bool handled)
-            {
-                handled = false;
-
-                if (_smoothScrollActive ||
-                    !AutoScroll ||
-                    !IsHandleCreated ||
-                    IsDisposed ||
-                    Disposing)
-                {
-                    return false;
-                }
-
-                int current = GetLogicalScrollOffset();
-                int target = ClampLogicalScrollOffset(requestedOffset);
-
-                if (current == target)
-                {
-                    handled = true;
-                    return false;
-                }
-
-                if (!TryPrepareScrollBitmapCache(current, target))
-                    return false;
-
-                handled = true;
-                bool previous = _scrollBitmapImmediateFrame;
-                bool changed;
-                _scrollBitmapImmediateFrame = true;
-
-                try
-                {
-                    changed = SetLogicalScrollOffset(target);
-                }
-                finally
-                {
-                    _scrollBitmapImmediateFrame = previous;
-                }
-
-                if (_scrollBitmapCacheActive &&
-                    GetLogicalScrollOffset() == target)
-                {
-                    ScheduleImmediateScrollBitmapCommit();
-                }
-
-                return changed;
-            }
-
-            private void ScheduleImmediateScrollBitmapCommit()
-            {
-                Timer timer = EnsureImmediateScrollBitmapCommitTimer();
-                timer.Stop();
-                timer.Interval = ScrollBitmapImmediateCommitDelay;
-                _scrollBitmapImmediateCommitPending = true;
-                timer.Start();
-            }
-
-            private Timer EnsureImmediateScrollBitmapCommitTimer()
-            {
-                if (_scrollBitmapImmediateCommitTimer == null)
-                {
-                    _scrollBitmapImmediateCommitTimer = new Timer();
-                    _scrollBitmapImmediateCommitTimer.Tick +=
-                        new EventHandler(
-                            ImmediateScrollBitmapCommitTimerTick);
-                }
-
-                return _scrollBitmapImmediateCommitTimer;
-            }
-
-            private void ImmediateScrollBitmapCommitTimerTick(
-                object sender,
-                EventArgs e)
-            {
-                CancelImmediateScrollBitmapCommit();
-                CommitScrollBitmapCache();
-            }
-
-            private void CancelImmediateScrollBitmapCommit()
-            {
-                _scrollBitmapImmediateCommitPending = false;
-
-                if (_scrollBitmapImmediateCommitTimer != null)
-                    _scrollBitmapImmediateCommitTimer.Stop();
-            }
-
-            private void CommitImmediateScrollBitmapCache()
-            {
-                if (!_scrollBitmapImmediateCommitPending)
-                    return;
-
-                CancelImmediateScrollBitmapCommit();
-                CommitScrollBitmapCache();
             }
 
             /// <summary>
@@ -832,8 +723,6 @@ namespace WinFormsXaml
 
             private void CommitScrollBitmapCache()
             {
-                CancelImmediateScrollBitmapCommit();
-
                 if (!_scrollBitmapCacheActive ||
                     _scrollBitmapCacheCommitting)
                 {
@@ -901,21 +790,8 @@ namespace WinFormsXaml
             private void DisposeScrollBitmapCache()
             {
                 _scrollBitmapCacheActive = false;
-                CancelImmediateScrollBitmapCommit();
                 DisposeScrollBitmapImage();
                 _scrollBitmapEligibilityRecords = null;
-
-                Timer immediateTimer =
-                    _scrollBitmapImmediateCommitTimer;
-                _scrollBitmapImmediateCommitTimer = null;
-
-                if (immediateTimer != null)
-                {
-                    immediateTimer.Tick -=
-                        new EventHandler(
-                            ImmediateScrollBitmapCommitTimerTick);
-                    immediateTimer.Dispose();
-                }
 
                 HostedScrollBitmapSurface surface =
                     _scrollBitmapSurface;
@@ -929,11 +805,6 @@ namespace WinFormsXaml
             internal bool ScrollBitmapCacheActiveForTest
             {
                 get { return _scrollBitmapCacheActive; }
-            }
-
-            internal bool ScrollBitmapImmediateCommitPendingForTest
-            {
-                get { return _scrollBitmapImmediateCommitPending; }
             }
 
             internal long ScrollBitmapCaptureCountForTest

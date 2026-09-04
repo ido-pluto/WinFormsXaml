@@ -8,26 +8,22 @@ All notable user-visible changes will be documented here.
   Literal, binding, and preset refresh paths now call the native
   `ResetBackColor()` behavior instead of failing through the WinForms setter;
   opaque colors remain reactive and can be applied again after the reset.
-- Enabled `ItemsControl.SmoothScroll` by default in runtime metadata, the XSD,
-  and documentation. Applications can still set it to `false`; eligible
-  ordinary hosts then publish immediate bitmap destinations and coalesce one
-  live child-tree commit.
+- Restored native-style immediate item scrolling as the default.
+  `ItemsControl.SmoothScroll` now defaults to `false` in runtime metadata and
+  the XSD; animation remains an explicit opt-in and can still be selected for
+  `ScrollIntoView` per call.
 - Preset keys that disappear from both the selected and configured default
   preset now call the native `ResetBackColor()` path for Control backgrounds
   and clear framework background-explicit metadata. Dark-only colors therefore
   cannot remain after switching to a Light preset that intentionally omits the
   key. Color conversion now also accepts every qualified `SystemColors.*` value
   and `Color.*` named value, including fully qualified `System.Drawing` forms.
-- Removed the torn child-window frames visible during fast native scrolling.
-  Eligible nonvirtual wheel, arrow, and page input now uses the same bounded
-  bitmap viewport for both native and styled chrome even when
-  `SmoothScroll="false"`: the requested position appears immediately and one
-  retained-tree move is committed after the input burst. Ineligible live
-  native paths synchronously flush only WinForms' already-invalidated regions
-  before returning from the scroll message. Bitmap frames use one unscaled
-  copy, repeated eligibility scans are cached by publication generation, and
-  styled value changes repaint only the old/new thumb travel instead of the
-  complete scrollbar.
+- Fixed themed item descendants disappearing or duplicating during mouse-wheel
+  input. `SmoothScroll="false"` now uses the live control tree directly for
+  native and styled wheel, arrow, and page commands instead of presenting an
+  incomplete `DrawToBitmap` snapshot. Native live paths synchronously flush
+  only WinForms' already-invalidated regions before returning from the scroll
+  message, and styled value changes repaint only the old/new thumb travel.
 - Locked down incomplete preset transitions as selected value, configured
   `Default` value, then explicit unset. When a Dark-only key is absent from
   both Light and Default, retained direct attributes and style setters restore

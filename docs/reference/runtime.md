@@ -732,10 +732,11 @@ The returned `ItemsControl` also exposes:
   `ScrollIntoView(index, alignment, animate)` with `Nearest`, `Start`,
   `Center`, or `End` alignment.
 
-`ItemsControl.AutoScroll` and `SmoothScroll` both default to `true`. Wheel and
-line/page commands from the active native or framework-owned scrollbar
-coalesce into one transition whose
-`SmoothScrollDuration` defaults to 120 milliseconds. Repeated commands retarget
+`ItemsControl.AutoScroll` defaults to `true`; `SmoothScroll` defaults to
+`false`. Wheel and line/page commands therefore move the live control tree
+immediately through the active native or framework-owned scrollbar. Setting
+`SmoothScroll=true` explicitly coalesces those commands into one transition
+whose `SmoothScrollDuration` defaults to 120 milliseconds. Repeated commands retarget
 that transition without resetting its fractional position or velocity, and
 sub-notch wheel deltas move proportionally instead of being held for a complete
 notch. Unhandled navigation keys from focused item descendants scroll the
@@ -746,9 +747,9 @@ tracking even when that preference is disabled. Native thumb release always
 commits immediately. A framework thumb cancels an active transition too:
 `LiveScroll=true` updates content while it moves, while `LiveScroll=false`
 moves only the thumb until release commits the selected offset.
-Set `SmoothScroll=false` when immediate destination changes are preferred; the
-eligible ordinary renderer still coalesces its retained child-tree move across
-the short input burst.
+The default `SmoothScroll=false` path does not capture or replace themed item
+content with a bitmap; the logical position, live controls, and active thumb
+are published together.
 
 `ScrollIntoView` without an explicit animation argument follows `SmoothScroll`.
 Its three-argument overload is a per-call override: `true` animates even when

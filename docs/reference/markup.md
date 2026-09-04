@@ -321,7 +321,8 @@ the same for ordinary, Controls-virtualized, and Lightweight item hosts.
 `ScrollBarGap` reserves empty pixels between item content and either the native
 or framework-owned active bar. It defaults to zero and works on either axis and
 on either vertical side in RTL.
-`SmoothScroll` controls wheel, arrow, and page commands for either scrollbar;
+`SmoothScroll` controls wheel, arrow, and page commands for either scrollbar
+and defaults to `false` for native-style immediate movement;
 `LiveScroll` controls whether a framework thumb drag updates content during the
 drag or only on release. `KeepScrollBarOnRight` overrides the vertical placement
 in RTL, while a horizontal framework scrollbar mirrors geometry and input.

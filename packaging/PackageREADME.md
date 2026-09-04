@@ -3,7 +3,8 @@
 WinFormsXaml creates normal Windows Forms control trees from readable XML. It
 targets .NET Framework 2.0 and has no runtime package dependencies.
 
-[Source code and documentation](https://github.com/ido-pluto/WinFormsXaml)
+[Documentation](https://ido-pluto.github.io/WinFormsXaml/) ·
+[Source code](https://github.com/ido-pluto/WinFormsXaml)
 
 > **Vibe-coding disclaimer:** This project is vibe coded and was developed with
 > extensive AI assistance. Review and test the source, generated behavior, and
@@ -175,8 +176,8 @@ public readonly ItemsBinding<ResultRow> Results =
 every row must reevaluate. `ScrollIntoView` and `ScrollIndexIntoView` support
 nearest, start, center, and end alignment.
 
-`AutoScroll` and `SmoothScroll` default to `true`. Viewport virtualization
-defaults to `false`; enable it only after measuring a large-list workload.
+`AutoScroll` defaults to `true`. `SmoothScroll` and viewport virtualization
+default to `false`; enable either only when its behavior suits the workload.
 
 ## Use presets
 

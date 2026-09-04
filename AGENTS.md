@@ -31,8 +31,8 @@ Do not trade correctness or maintainability for a benchmark-only shortcut.
 - Native WinForms behavior is the default. Framework rendering is used for
   explicit styling or for a capability fallback, not merely because the host
   operating system is old.
-- `ItemsControl.AutoScroll` and `ItemsControl.SmoothScroll` default to `true`.
-  Virtualization defaults to `false` and is always explicit.
+- `ItemsControl.AutoScroll` defaults to `true`. `SmoothScroll` and
+  virtualization default to `false` and are always explicit.
 - Missing binding members and invalid markup must produce a contextual error;
   do not make a broken item silently disappear.
 - Preset lookup is selected preset, then that preset group's declared default.
@@ -383,7 +383,8 @@ warnings; built-in roots and attributes must remain declared.
 ## Packaging
 
 The package identity is `WinFormsXaml`, authored by `ido-pluto`, licensed MIT,
-with project and repository URLs pointing to
+with its project URL pointing to <https://ido-pluto.github.io/WinFormsXaml/>
+and repository URL pointing to
 <https://github.com/ido-pluto/WinFormsXaml>.
 
 Windows:

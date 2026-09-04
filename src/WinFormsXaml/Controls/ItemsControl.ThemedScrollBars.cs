@@ -527,7 +527,6 @@ namespace WinFormsXaml
                 if (e.Type == ScrollEventType.EndScroll)
                 {
                     _themedThumbTracking = false;
-                    CommitImmediateScrollBitmapCache();
                     SynchronizeThemedScrollBar();
                     return;
                 }
@@ -577,15 +576,7 @@ namespace WinFormsXaml
                             false);
                     }
                     else
-                    {
-                        bool handled;
-                        TryApplyImmediateScrollBitmapTarget(
-                            target,
-                            out handled);
-
-                        if (!handled)
-                            SetLogicalScrollOffset(target);
-                    }
+                        SetLogicalScrollOffset(target);
                 }
                 else if (e.Type == ScrollEventType.First)
                 {

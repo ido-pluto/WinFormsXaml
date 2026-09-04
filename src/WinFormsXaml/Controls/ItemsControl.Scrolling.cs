@@ -25,7 +25,7 @@ namespace WinFormsXaml
             private int _mouseWheelDeltaRemainder;
             private bool _applyingLogicalScrollCommand;
             private bool _legacyMouseWheelRegistered;
-            private bool _smoothScroll = true;
+            private bool _smoothScroll;
             private int _smoothScrollDuration =
                 DefaultSmoothScrollDuration;
             private Timer _smoothScrollTimer;
@@ -52,9 +52,9 @@ namespace WinFormsXaml
 
             /// <summary>
             /// Gets or sets whether wheel and line/page commands interpolate
-            /// their logical offset on the UI thread. The default is true.
+            /// their logical offset on the UI thread. The default is false.
             /// </summary>
-            [DefaultValue(true)]
+            [DefaultValue(false)]
             public bool SmoothScroll
             {
                 get { return _smoothScroll; }
@@ -170,8 +170,7 @@ namespace WinFormsXaml
 
                 if (_scrollBitmapCacheActive &&
                     !_scrollBitmapCacheCommitting &&
-                    !_applyingSmoothScrollFrame &&
-                    !_scrollBitmapImmediateFrame)
+                    !_applyingSmoothScrollFrame)
                 {
                     CommitScrollBitmapCache();
                 }
@@ -185,8 +184,7 @@ namespace WinFormsXaml
                     requestedOffset,
                     maximum);
 
-                if ((_applyingSmoothScrollFrame ||
-                     _scrollBitmapImmediateFrame) &&
+                if (_applyingSmoothScrollFrame &&
                     _scrollBitmapCacheActive)
                 {
                     if (IsScrollBitmapSnapshotCurrent() &&
@@ -648,17 +646,6 @@ namespace WinFormsXaml
                         requestedOffset);
                 }
 
-                if (allowSmoothScroll)
-                {
-                    bool handled;
-                    bool changed = TryApplyImmediateScrollBitmapTarget(
-                        requestedOffset,
-                        out handled);
-
-                    if (handled)
-                        return changed;
-                }
-
                 return SetLogicalScrollOffset(requestedOffset);
             }
 
@@ -732,7 +719,6 @@ namespace WinFormsXaml
                 _smoothScrollPosition = current;
 
                 TryPrepareScrollBitmapCache(current, target);
-                CancelImmediateScrollBitmapCommit();
 
                 if (!_smoothScrollActive)
                     _smoothScrollVelocity = 0.0;
@@ -1071,8 +1057,8 @@ namespace WinFormsXaml
             /// <summary>
             /// Intercepts line and page commands for this control's own native
             /// scrollbar before ScrollableControl moves every retained child.
-            /// The shared bitmap transaction remains the single presentation
-            /// authority for animated and immediate relative-scroll bursts.
+            /// Interception is used only for explicit smooth scrolling; the
+            /// default immediate path stays with native live-control movement.
             /// </summary>
             protected override void WndProc(ref Message message)
             {
@@ -1179,15 +1165,7 @@ namespace WinFormsXaml
                         false);
                 }
                 else
-                {
-                    bool handled;
-                    TryApplyImmediateScrollBitmapTarget(
-                        target,
-                        out handled);
-
-                    if (!handled)
-                        return false;
-                }
+                    return false;
 
                 SetScrollState(ScrollStateUserHasScrolled, true);
 
